@@ -9,6 +9,7 @@ import com.example.newsapp.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.log
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val repository: NewsRepository): ViewModel() {
@@ -16,12 +17,21 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository):
     var isLoading = mutableStateOf(false)
     var selectedCategory = mutableStateOf("All")
 
+    var currentPage = 1
+
     init {
         fetchNews("general")
     }
 
+    fun loadNextPage() {
+        currentPage++
+        fetchNews(selectedCategory.value, currentPage)
+    }
+
     fun onCategoryChanged(newCategory: String) {
         selectedCategory.value = newCategory
+        currentPage = 1
+        articles.value = emptyList()
 
         val apiCategory = when (newCategory) {
             "All" -> "general"
@@ -34,13 +44,14 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository):
         fetchNews(apiCategory)
     }
 
-    private fun fetchNews(category: String) {
+    private fun fetchNews(category: String, page: Int = 1) {
         viewModelScope.launch {
             isLoading.value = true
             try {
-                articles.value = repository.getNewsByCategory(category)
+                articles.value += repository.getNewsByCategory(category, page)
+
             } catch (e: Exception) {
-                Log.d("TAG", "${e.message}")
+                Log.d("ITEMS", "${e.message}")
             } finally {
                 isLoading.value = false
             }

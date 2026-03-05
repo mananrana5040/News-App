@@ -1,5 +1,6 @@
 package com.example.newsapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +53,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.newsapp.api.NewsApiService
+import com.example.newsapp.model.News
+import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.viewmodel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -74,9 +85,13 @@ fun MainScreen(viewModel: NewsViewModel) {
         Modifier
             .fillMaxSize()
             .background(Color(0xFFF8F9FD))
+            .statusBarsPadding()
     ) {
         TopBar()
-        BreakingNewsCard()
+
+        val news = viewModel.articles.value
+        val breakingNews = if (news.isNotEmpty()) news[0] else null
+        BreakingNewsCard(breakingNews)
 
 
         val currentCategory = viewModel.selectedCategory.value
@@ -108,8 +123,14 @@ fun TopBar() {
             contentScale = ContentScale.Crop
         )
         Spacer(Modifier.width(15.dp))
+
+        val currentDate = SimpleDateFormat(
+            "MMM dd, yyyy",
+            Locale.getDefault()
+        ).format(Calendar.getInstance().time)
+
         Text(
-            "March 4, 2026", style = TextStyle(
+            currentDate, style = TextStyle(
                 fontSize = 14.sp,
                 color = Color(0xFF9A98A5),
                 fontWeight = FontWeight.Medium
@@ -130,7 +151,8 @@ fun TopBar() {
 }
 
 @Composable
-fun BreakingNewsCard() {
+fun BreakingNewsCard(news: News?) {
+    val context = LocalContext.current
 
     Column(
         Modifier
@@ -151,10 +173,13 @@ fun BreakingNewsCard() {
             shape = RoundedCornerShape(32.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().clickable {
+                val intent = Intent(context, ContentActivity::class.java)
+                context.startActivity(intent)
+            }
         ) {
-            Image(
-                painterResource(R.drawable.ic_launcher_background),
+            AsyncImage(
+                news?.urlToImage ?: R.drawable.ic_launcher_background,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +189,7 @@ fun BreakingNewsCard() {
             )
 
             Text(
-                text = "Breaking News is placed in this text with proper image to show bold",
+                text = news?.title ?: "Breaking News Loading",
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -186,8 +211,10 @@ fun BreakingNewsCard() {
                     modifier = Modifier.size(18.dp)
                 )
 
+                val formatDate = formatDate(news?.publishedAt ?: "2026-03-05T04:43:00Z")
+
                 Text(
-                    "March 4, 2026", style = TextStyle(
+                    formatDate.toString(), style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
@@ -198,14 +225,14 @@ fun BreakingNewsCard() {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Search",
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "",
                     tint = Color(0xFF9A98A5),
                     modifier = Modifier.size(18.dp)
                 )
 
                 Text(
-                    "10 min read", style = TextStyle(
+                    news?.author ?: "Author", style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
@@ -286,13 +313,28 @@ fun NewsList(viewModel: NewsViewModel) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            items(news) { items ->
+            items(news.drop(1)) { items ->
                 NewsItem(
                     items.title,
                     items.urlToImage ?: "Null",
                     items.publishedAt,
                     items.author ?: "Author"
                 )
+            }
+
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Load More Articles",
+                        style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
+                        modifier = Modifier.clickable {
+                            viewModel.loadNextPage()
+                        }
+                    )
+                }
             }
         }
     }
@@ -347,13 +389,15 @@ fun NewsItem(
 
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "Search",
+                    contentDescription = "",
                     tint = Color(0xFF9A98A5),
                     modifier = Modifier.size(18.dp)
                 )
 
+                val formatDate = formatDate(date)
+
                 Text(
-                    date, style = TextStyle(
+                    formatDate.toString(), style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
@@ -364,8 +408,8 @@ fun NewsItem(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Search",
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "",
                     tint = Color(0xFF9A98A5),
                     modifier = Modifier.size(18.dp)
                 )
@@ -374,9 +418,12 @@ fun NewsItem(
                     author, style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
                     ),
-                    modifier = Modifier.padding(start = 5.dp)
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .width(80.dp)
                 )
             }
 
@@ -385,12 +432,23 @@ fun NewsItem(
     }
 }
 
+@Composable
+private fun formatDate(date: String): Any? {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
+    val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    val date = inputFormat.parse(date)
+    val formatDate = date?.let { outputFormat.format(it) } ?: date
+    return formatDate
+}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     NewsAppTheme {
         val viewModel: NewsViewModel = hiltViewModel()
-        MainScreen(viewModel)
+        MainScreen(viewModel = viewModel)
     }
 }
 
