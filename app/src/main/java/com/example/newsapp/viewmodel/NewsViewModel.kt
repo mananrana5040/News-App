@@ -14,13 +14,29 @@ import kotlin.math.log
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val repository: NewsRepository): ViewModel() {
     var articles = mutableStateOf<List<News>>(emptyList())
+
+    var breakingNews = mutableStateOf<News?>(null)
     var isLoading = mutableStateOf(false)
     var selectedCategory = mutableStateOf("All")
 
     var currentPage = 1
 
     init {
+        fetchBreakingNews()
         fetchNews("general")
+    }
+
+    private fun fetchBreakingNews() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getNewsByCategory("general")
+                if (response.isNotEmpty()) {
+                    breakingNews.value = response[0]
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", "Breaking News Error: ${e.message}")
+            }
+        }
     }
 
     fun loadNextPage() {

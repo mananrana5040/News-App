@@ -73,14 +73,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: NewsViewModel = hiltViewModel()
             NewsAppTheme {
-                MainScreen(viewModel)
+                MainScreen(viewModel, onBreakingCardClick = {
+                    val intent = Intent(this, ContentActivity::class.java)
+                    intent.putExtra("title", viewModel.breakingNews.value?.title)
+                    intent.putExtra("image", viewModel.breakingNews.value?.urlToImage)
+                    intent.putExtra("author", viewModel.breakingNews.value?.author)
+                    intent.putExtra("date", viewModel.breakingNews.value?.publishedAt)
+                    startActivity(intent)
+                })
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(viewModel: NewsViewModel) {
+fun MainScreen(viewModel: NewsViewModel, onBreakingCardClick: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -89,9 +96,8 @@ fun MainScreen(viewModel: NewsViewModel) {
     ) {
         TopBar()
 
-        val news = viewModel.articles.value
-        val breakingNews = if (news.isNotEmpty()) news[0] else null
-        BreakingNewsCard(breakingNews)
+        val breakingNews = viewModel.breakingNews.value
+        BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick)
 
 
         val currentCategory = viewModel.selectedCategory.value
@@ -151,8 +157,7 @@ fun TopBar() {
 }
 
 @Composable
-fun BreakingNewsCard(news: News?) {
-    val context = LocalContext.current
+fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
 
     Column(
         Modifier
@@ -173,10 +178,9 @@ fun BreakingNewsCard(news: News?) {
             shape = RoundedCornerShape(32.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier.fillMaxWidth().clickable {
-                val intent = Intent(context, ContentActivity::class.java)
-                context.startActivity(intent)
-            }
+            modifier = Modifier.fillMaxWidth().clickable (
+                onClick = onBreakingCardClick
+            )
         ) {
             AsyncImage(
                 news?.urlToImage ?: R.drawable.ic_launcher_background,
@@ -237,7 +241,8 @@ fun BreakingNewsCard(news: News?) {
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
                     ),
-                    modifier = Modifier.padding(start = 5.dp)
+                    modifier = Modifier.padding(start = 5.dp).width(100.dp),
+                    maxLines = 1
                 )
             }
         }
@@ -448,7 +453,7 @@ private fun formatDate(date: String): Any? {
 fun GreetingPreview() {
     NewsAppTheme {
         val viewModel: NewsViewModel = hiltViewModel()
-        MainScreen(viewModel = viewModel)
+        MainScreen(viewModel = viewModel, onBreakingCardClick = {})
     }
 }
 

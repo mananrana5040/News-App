@@ -45,4 +45,6 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version = "2.3.4" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize"}
+
 
