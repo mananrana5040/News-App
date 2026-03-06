@@ -75,10 +75,7 @@ class MainActivity : ComponentActivity() {
             NewsAppTheme {
                 MainScreen(viewModel, onBreakingCardClick = {
                     val intent = Intent(this, ContentActivity::class.java)
-                    intent.putExtra("title", viewModel.breakingNews.value?.title)
-                    intent.putExtra("image", viewModel.breakingNews.value?.urlToImage)
-                    intent.putExtra("author", viewModel.breakingNews.value?.author)
-                    intent.putExtra("date", viewModel.breakingNews.value?.publishedAt)
+                    intent.putExtra("article_data", viewModel.breakingNews.value)
                     startActivity(intent)
                 })
             }
@@ -320,10 +317,7 @@ fun NewsList(viewModel: NewsViewModel) {
 
             items(news.drop(1)) { items ->
                 NewsItem(
-                    items.title,
-                    items.urlToImage ?: "Null",
-                    items.publishedAt,
-                    items.author ?: "Author"
+                    items
                 )
             }
 
@@ -349,20 +343,23 @@ fun NewsList(viewModel: NewsViewModel) {
 
 @Composable
 fun NewsItem(
-    title: String,
-    imageUrl: String,
-    date: String,
-    author: String
+    news: News
+
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp, vertical = 8.dp).clickable(onClick = {
+                val intent = Intent(context, ContentActivity::class.java)
+                intent.putExtra("article_data", news)
+                context.startActivity(intent)
+            }),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         AsyncImage(
-            imageUrl,
+            news.urlToImage ?: "null",
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)
@@ -377,7 +374,7 @@ fun NewsItem(
         ) {
 
             Text(
-                text = title,
+                text = news.title,
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -399,7 +396,7 @@ fun NewsItem(
                     modifier = Modifier.size(18.dp)
                 )
 
-                val formatDate = formatDate(date)
+                val formatDate = formatDate(news.publishedAt)
 
                 Text(
                     formatDate.toString(), style = TextStyle(
@@ -420,7 +417,7 @@ fun NewsItem(
                 )
 
                 Text(
-                    author, style = TextStyle(
+                    news.author ?: "author", style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium,

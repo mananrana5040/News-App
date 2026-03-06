@@ -3,6 +3,7 @@ package com.example.newsapp
 import android.R.attr.onClick
 import android.content.Intent
 import android.graphics.Paint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -59,31 +60,29 @@ import java.util.TimeZone
 
 class ContentActivity : ComponentActivity() {
 
-    lateinit var title: String
-    lateinit var imageUrl: String
-    lateinit var author: String
-    lateinit var date: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        title = intent.getStringExtra("title") ?: "Sample News Title"
-        imageUrl = intent.getStringExtra("image") ?: "null"
-        author = intent.getStringExtra("author") ?: "Sample author"
-        date = intent.getStringExtra("author") ?: "2026-03-05T04:43:00Z"
+        val article = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("article_data", News::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra<News>("article_data")
+        }
 
         setContent {
             NewsAppTheme {
                 ContentScreen(onBackClick = {
                     finish()
-                })
+                },article)
             }
         }
     }
 }
 
 @Composable
-fun ContentScreen(onBackClick: () -> Unit) {
+fun ContentScreen(onBackClick: () -> Unit, news: News?) {
 
     Column(
         Modifier
@@ -93,7 +92,7 @@ fun ContentScreen(onBackClick: () -> Unit) {
     ) {
 
         ContentTopBar(onBackClick = onBackClick)
-        ContentMainCard(news = null)
+        ContentMainCard(news = news)
     }
 
 }
@@ -221,7 +220,7 @@ fun ContentMainCard(news: News?) {
         val lorumIpsum =
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
         Text(
-            lorumIpsum, Modifier.padding(horizontal = 12.dp), style = TextStyle(
+            news?.content ?: lorumIpsum, Modifier.padding(horizontal = 12.dp), style = TextStyle(
                 fontSize = 18.sp,
                 color = Color(0xFF9A98A5),
                 lineHeight = 26.sp,
@@ -249,6 +248,6 @@ private fun formatDate(date: String): Any? {
 @Composable
 fun GreetingPreview2() {
     NewsAppTheme {
-        ContentScreen(onBackClick = {})
+        ContentScreen(onBackClick = {}, news = null)
     }
 }

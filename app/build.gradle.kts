@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.android)
 
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
@@ -41,6 +42,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    kotlin{
+        jvmToolchain(11)
+    }
 }
 
 dependencies {
@@ -67,6 +72,8 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.kotlin.parcelize.runtime)
+
 
 
 }
