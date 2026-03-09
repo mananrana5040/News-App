@@ -303,11 +303,7 @@ fun NewsList(viewModel: NewsViewModel) {
     val news = viewModel.articles.value
     val loading = viewModel.isLoading.value
 
-    if (loading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    } else {
+
         LazyColumn(
             Modifier
                 .fillMaxWidth()
@@ -315,19 +311,25 @@ fun NewsList(viewModel: NewsViewModel) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            items(news.drop(1)) { items ->
+            items(news.drop(1),
+                key = { article -> article.urlToImage ?: article.title }) { items ->
                 NewsItem(
                     items
                 )
             }
 
             item {
+                if (loading) {
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color(0xFF3B82F6))
+                    }
+                } else {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Load More Articles",
+                        text = "Load More News",
                         style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
                         modifier = Modifier.clickable {
                             viewModel.loadNextPage()
@@ -335,8 +337,10 @@ fun NewsList(viewModel: NewsViewModel) {
                     )
                 }
             }
+
         }
-    }
+        }
+
 
 
 }

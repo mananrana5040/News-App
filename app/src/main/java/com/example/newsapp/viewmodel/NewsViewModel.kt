@@ -65,7 +65,7 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository):
             isLoading.value = true
             try {
                 articles.value += repository.getNewsByCategory(category, page)
-
+                Log.d("NEW_SIZE", "Total News: ${articles.value.size}")
             } catch (e: Exception) {
                 Log.d("ITEMS", "${e.message}")
             } finally {

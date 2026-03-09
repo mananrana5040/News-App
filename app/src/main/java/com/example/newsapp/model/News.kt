@@ -10,5 +10,6 @@ data class News(
     val author: String?,
     val urlToImage: String?,
     val publishedAt: String,
-    val content: String?
+    val content: String?,
+    val url: String
 ): Parcelable

@@ -3,6 +3,7 @@ package com.example.newsapp
 import android.R.attr.onClick
 import android.content.Intent
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +32,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -57,6 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+import androidx.core.net.toUri
 
 class ContentActivity : ComponentActivity() {
 
@@ -73,16 +78,34 @@ class ContentActivity : ComponentActivity() {
 
         setContent {
             NewsAppTheme {
-                ContentScreen(onBackClick = {
+                ContentScreen(
+                    onBackClick = {
                     finish()
-                },article)
+                }, article, onReadMoreClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, article?.url?.toUri())
+                    startActivity(intent)
+                },
+                    onShareItem = {
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, "Check out this news: ${article?.title}\n\nRead more at: ${article?.url}")
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, "Share News via")
+                        startActivity(shareIntent)
+                    })
             }
         }
     }
 }
 
 @Composable
-fun ContentScreen(onBackClick: () -> Unit, news: News?) {
+fun ContentScreen(
+    onBackClick: () -> Unit,
+    news: News?,
+    onReadMoreClick: () -> Unit,
+    onShareItem: () -> Unit
+) {
 
     Column(
         Modifier
@@ -91,14 +114,14 @@ fun ContentScreen(onBackClick: () -> Unit, news: News?) {
             .statusBarsPadding()
     ) {
 
-        ContentTopBar(onBackClick = onBackClick)
-        ContentMainCard(news = news)
+        ContentTopBar(onBackClick = onBackClick, onShareItem = onShareItem)
+        ContentMainCard(news = news, onReadMoreClick = onReadMoreClick)
     }
 
 }
 
 @Composable
-fun ContentTopBar(onBackClick: () -> Unit) {
+fun ContentTopBar(onBackClick: () -> Unit, onShareItem: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -129,7 +152,7 @@ fun ContentTopBar(onBackClick: () -> Unit) {
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(Color.White)
-                .clickable { },
+                .clickable(onClick = onShareItem),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -145,11 +168,12 @@ fun ContentTopBar(onBackClick: () -> Unit) {
 
 
 @Composable
-fun ContentMainCard(news: News?) {
+fun ContentMainCard(news: News?, onReadMoreClick: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = 24.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
             news?.urlToImage ?: R.drawable.ic_launcher_background,
@@ -228,6 +252,15 @@ fun ContentMainCard(news: News?) {
             )
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = onReadMoreClick,
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+        ) {
+            Text("Read Full News")
+        }
+
 
     }
 
@@ -248,6 +281,6 @@ private fun formatDate(date: String): Any? {
 @Composable
 fun GreetingPreview2() {
     NewsAppTheme {
-        ContentScreen(onBackClick = {}, news = null)
+        ContentScreen(onBackClick = {}, news = null, onReadMoreClick = {}, onShareItem = {})
     }
 }
