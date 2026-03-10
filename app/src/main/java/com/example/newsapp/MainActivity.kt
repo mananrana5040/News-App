@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +59,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.model.News
+import com.example.newsapp.preferences.ThemeManager
 import com.example.newsapp.repository.NewsRepository
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.newsapp.viewmodel.NewsViewModel
@@ -70,28 +75,44 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val themeManager = ThemeManager(this)
+
         setContent {
             val viewModel: NewsViewModel = hiltViewModel()
-            NewsAppTheme {
-                MainScreen(viewModel, onBreakingCardClick = {
-                    val intent = Intent(this, ContentActivity::class.java)
-                    intent.putExtra("article_data", viewModel.breakingNews.value)
-                    startActivity(intent)
-                })
+            val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
+            val systemTheme = isSystemInDarkTheme()
+            val finalThemeValue = isDarkThemePref ?: systemTheme
+
+            NewsAppTheme(darkTheme = finalThemeValue) {
+                MainScreen(
+                    viewModel,
+                    onBreakingCardClick = {
+                        val intent = Intent(this, ContentActivity::class.java)
+                        intent.putExtra("article_data", viewModel.breakingNews.value)
+                        startActivity(intent)
+                    },
+                    onSettingClick = {
+                        val intent = Intent(this, SettingActivity::class.java)
+                        startActivity(intent)
+                    })
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(viewModel: NewsViewModel, onBreakingCardClick: () -> Unit) {
+fun MainScreen(
+    viewModel: NewsViewModel,
+    onBreakingCardClick: () -> Unit,
+    onSettingClick: () -> Unit
+) {
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FD))
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
-        TopBar()
+        TopBar(onSettingClick = onSettingClick)
 
         val breakingNews = viewModel.breakingNews.value
         BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick)
@@ -110,7 +131,7 @@ fun MainScreen(viewModel: NewsViewModel, onBreakingCardClick: () -> Unit) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(onSettingClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -122,6 +143,7 @@ fun TopBar() {
             contentDescription = null,
             modifier = Modifier
                 .size(45.dp)
+                .clickable(enabled = true, onClick = onSettingClick)
                 .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
@@ -139,16 +161,16 @@ fun TopBar() {
                 fontWeight = FontWeight.Medium
             )
         )
-        Spacer(Modifier.weight(1f))
-
-        IconButton(onClick = {}) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = Color(0xFF1E293B),
-                modifier = Modifier.size(28.dp)
-            )
-        }
+//        Spacer(Modifier.weight(1f))
+//
+//        IconButton(onClick = {}) {
+//            Icon(
+//                imageVector = Icons.Default.Search,
+//                contentDescription = "Search",
+//                tint = MaterialTheme.colorScheme.onBackground,
+//                modifier = Modifier.size(28.dp)
+//            )
+//        }
     }
 
 }
@@ -166,18 +188,20 @@ fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
             "Breaking News", style = TextStyle(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF444D70)
+                color = MaterialTheme.colorScheme.onBackground
             ),
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Card(
             shape = RoundedCornerShape(32.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            modifier = Modifier.fillMaxWidth().clickable (
-                onClick = onBreakingCardClick
-            )
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    onClick = onBreakingCardClick
+                )
         ) {
             AsyncImage(
                 news?.urlToImage ?: R.drawable.ic_launcher_background,
@@ -194,7 +218,7 @@ fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF444D70),
+                    color = MaterialTheme.colorScheme.onBackground,
                 ),
                 maxLines = 2,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
@@ -238,7 +262,9 @@ fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
                     ),
-                    modifier = Modifier.padding(start = 5.dp).width(100.dp),
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .width(100.dp),
                     maxLines = 1
                 )
             }
@@ -304,28 +330,31 @@ fun NewsList(viewModel: NewsViewModel) {
     val loading = viewModel.isLoading.value
 
 
-        LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+    LazyColumn(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 18.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
 
-            items(news.drop(1),
-                key = { article -> article.urlToImage ?: article.title }) { items ->
-                NewsItem(
-                    items
-                )
-            }
+        items(
+            news.drop(1),
+            key = { article -> article.urlToImage ?: article.title }) { items ->
+            NewsItem(
+                items
+            )
+        }
 
-            item {
-                if (loading) {
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Color(0xFF3B82F6))
-                    }
-                } else {
+        item {
+            if (loading) {
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color(0xFF3B82F6))
+                }
+            } else {
                 Box(
-                    modifier = Modifier.fillMaxWidth().padding(24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -339,8 +368,7 @@ fun NewsList(viewModel: NewsViewModel) {
             }
 
         }
-        }
-
+    }
 
 
 }
@@ -354,7 +382,8 @@ fun NewsItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp).clickable(onClick = {
+            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .clickable(onClick = {
                 val intent = Intent(context, ContentActivity::class.java)
                 intent.putExtra("article_data", news)
                 context.startActivity(intent)
@@ -382,7 +411,7 @@ fun NewsItem(
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF444D70),
+                    color = MaterialTheme.colorScheme.onBackground,
                 ),
                 maxLines = 2,
             )
@@ -454,7 +483,7 @@ private fun formatDate(date: String): Any? {
 fun GreetingPreview() {
     NewsAppTheme {
         val viewModel: NewsViewModel = hiltViewModel()
-        MainScreen(viewModel = viewModel, onBreakingCardClick = {})
+        MainScreen(viewModel = viewModel, onBreakingCardClick = {}, onSettingClick = {})
     }
 }
 

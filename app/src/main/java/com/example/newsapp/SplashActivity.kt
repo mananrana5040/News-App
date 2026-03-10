@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.newsapp.preferences.ThemeManager
 import com.example.newsapp.ui.theme.NewsAppTheme
 import kotlinx.coroutines.delay
 
@@ -36,8 +41,14 @@ class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val themeManager = ThemeManager(this)
         setContent {
-            NewsAppTheme {
+
+            val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
+            val systemTheme = isSystemInDarkTheme()
+            val finalThemeValue = isDarkThemePref ?: systemTheme
+
+            NewsAppTheme(darkTheme = finalThemeValue) {
                 SplashScreen()
             }
 
@@ -57,7 +68,7 @@ class SplashActivity : ComponentActivity() {
 fun SplashScreen() {
 
     Column(
-        Modifier.fillMaxSize(),
+        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -74,7 +85,8 @@ fun SplashScreen() {
             text = "News App",
             style = TextStyle(
                 fontSize = 22.sp,
-                fontWeight = FontWeight.ExtraBold
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onBackground
             )
         )
     }

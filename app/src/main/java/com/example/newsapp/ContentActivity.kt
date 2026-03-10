@@ -1,18 +1,14 @@
 package com.example.newsapp
 
-import android.R.attr.onClick
 import android.content.Intent
-import android.graphics.Paint
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,38 +26,34 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.newsapp.model.News
+import com.example.newsapp.preferences.ThemeManager
 import com.example.newsapp.ui.theme.NewsAppTheme
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
-import androidx.core.net.toUri
 
 class ContentActivity : ComponentActivity() {
 
@@ -75,9 +67,13 @@ class ContentActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra<News>("article_data")
         }
+        val themeManager = ThemeManager(this)
 
         setContent {
-            NewsAppTheme {
+            val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
+            val systemTheme = isSystemInDarkTheme()
+            val finalThemeValue = isDarkThemePref ?: systemTheme
+            NewsAppTheme(darkTheme = finalThemeValue) {
                 ContentScreen(
                     onBackClick = {
                     finish()
@@ -110,7 +106,7 @@ fun ContentScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F9FD))
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
 
@@ -132,14 +128,14 @@ fun ContentTopBar(onBackClick: () -> Unit, onShareItem: () -> Unit) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onPrimary)
                 .clickable(true, onClick = onBackClick),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "",
-                tint = Color(0xFF1E293B),
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -151,14 +147,14 @@ fun ContentTopBar(onBackClick: () -> Unit, onShareItem: () -> Unit) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.onPrimary)
                 .clickable(onClick = onShareItem),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Share,
                 contentDescription = "",
-                tint = Color(0xFF1E293B),
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -190,7 +186,7 @@ fun ContentMainCard(news: News?, onReadMoreClick: () -> Unit) {
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF444D70),
+                color = MaterialTheme.colorScheme.onBackground,
             ),
             maxLines = 2,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
@@ -258,7 +254,7 @@ fun ContentMainCard(news: News?, onReadMoreClick: () -> Unit) {
             onClick = onReadMoreClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
         ) {
-            Text("Read Full News")
+            Text("Read Full News", color = Color(0xFFFFFFFF))
         }
 
 

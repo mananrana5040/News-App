@@ -15,10 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsApp">
         <activity
+            android:name=".SettingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_setting"
+            android:theme="@style/Theme.NewsApp" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NewsApp" >
+            android:theme="@style/Theme.NewsApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,9 +39,7 @@
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NewsApp">
-
-        </activity>
+            android:theme="@style/Theme.NewsApp"></activity>
     </application>
 
 </manifest>

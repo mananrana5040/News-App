@@ -73,6 +73,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.kotlin.parcelize.runtime)
+    implementation(libs.androidx.datastore.preferences)
 
 
 
