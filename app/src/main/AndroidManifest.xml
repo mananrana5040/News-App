@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".MyApp"
+        android:name=".app.MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,12 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewsApp">
         <activity
-            android:name=".SettingActivity"
+            android:name=".activities.SettingActivity"
             android:exported="false"
             android:label="@string/title_activity_setting"
             android:theme="@style/Theme.NewsApp" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.NewsApp">
@@ -31,15 +31,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ContentActivity"
+            android:name=".activities.ContentActivity"
             android:exported="false"
             android:label="@string/title_activity_content"
             android:theme="@style/Theme.NewsApp" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="false"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NewsApp"></activity>
+            android:theme="@style/Theme.NewsApp"/>
     </application>
 
 </manifest>

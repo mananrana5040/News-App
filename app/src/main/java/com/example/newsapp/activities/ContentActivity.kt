@@ -1,4 +1,4 @@
-package com.example.newsapp
+package com.example.newsapp.activities
 
 import android.content.Intent
 import android.os.Build
@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import com.example.newsapp.R
 import com.example.newsapp.model.News
 import com.example.newsapp.preferences.ThemeManager
 import com.example.newsapp.ui.theme.NewsAppTheme
@@ -65,7 +66,7 @@ class ContentActivity : ComponentActivity() {
             intent.getParcelableExtra("article_data", News::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra<News>("article_data")
+            intent.getParcelableExtra("article_data")
         }
         val themeManager = ThemeManager(this)
 
