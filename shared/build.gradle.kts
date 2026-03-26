@@ -14,17 +14,11 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
 
-    android {
-        androidResources.enable = true
-
+    androidLibrary {
         namespace = "com.example.shared"
-        compileSdk {
-            version = release(36) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = 36
         minSdk = 24
-
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         withHostTestBuilder {
         }
 
@@ -92,6 +86,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.ui)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 implementation(compose.components.resources)
 
             }
