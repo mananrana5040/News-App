@@ -64,8 +64,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.android)
     implementation(libs.kotlinx.serialization.json)

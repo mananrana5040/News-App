@@ -84,6 +84,9 @@ kotlin {
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.androidx.datastore.preferences)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor3)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
