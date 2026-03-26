@@ -1,6 +1,7 @@
 package com.example.shared.koin
 
 import com.example.shared.api.NewsApiService
+import com.example.shared.preference.ThemeManager
 import com.example.shared.repository.NewsRepository
 import com.example.shared.viewmodel.NewsViewModel
 import io.ktor.client.HttpClient
@@ -23,4 +24,6 @@ val commonModule = module {
     single { NewsRepository(get()) }
 
     factory { NewsViewModel(get()) }
+
+    single { ThemeManager(get()) }
 }

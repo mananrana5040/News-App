@@ -3,14 +3,20 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.android.lint)
     alias(libs.plugins.kotlin.serialization)
+    id("org.jetbrains.compose")
+    alias(libs.plugins.kotlin.compose)
 }
 
 kotlin {
 
+
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
+
     android {
+        androidResources.enable = true
+
         namespace = "com.example.shared"
         compileSdk {
             version = release(36) {
@@ -56,6 +62,7 @@ kotlin {
         }
     }
 
+
     // Source set declarations.
     // Declaring a target automatically creates a source set with the same name. By default, the
     // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
@@ -76,6 +83,13 @@ kotlin {
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.androidx.datastore.preferences)
+
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.ui)
+                implementation(compose.material3)
+                implementation(compose.components.resources)
 
             }
         }

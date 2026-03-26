@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.example.newsapp.R
 import com.example.newsapp.preferences.ThemeManager
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.shared.views.SplashScreen
 import kotlinx.coroutines.delay
 
 class SplashActivity : ComponentActivity() {
@@ -48,54 +49,53 @@ class SplashActivity : ComponentActivity() {
             val finalThemeValue = isDarkThemePref ?: systemTheme
 
             NewsAppTheme(darkTheme = finalThemeValue) {
-                SplashScreen()
+                SplashScreen {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
             }
 
-            LaunchedEffect(key1 = true) {
-                delay(3000)
-                val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
         }
 
 
     }
 }
-
-@Composable
-fun SplashScreen() {
-
-    Column(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(R.drawable.splash_icon),
-            contentDescription = null,
-            modifier = Modifier
-                .size(120.dp)
-                .clip(RoundedCornerShape(24.dp)),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(Modifier.padding(top = 16.dp))
-        Text(
-            text = "News App",
-            style = TextStyle(
-                fontSize = 22.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        )
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview3() {
-    NewsAppTheme {
-        SplashScreen()
-    }
-}
+//
+//@Composable
+//fun SplashScreen() {
+//
+//    Column(
+//        Modifier
+//            .fillMaxSize()
+//            .background(MaterialTheme.colorScheme.background),
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center
+//    ) {
+//        Image(
+//            painter = painterResource(R.drawable.splash_icon),
+//            contentDescription = null,
+//            modifier = Modifier
+//                .size(120.dp)
+//                .clip(RoundedCornerShape(24.dp)),
+//            contentScale = ContentScale.Crop
+//        )
+//        Spacer(Modifier.padding(top = 16.dp))
+//        Text(
+//            text = "News App",
+//            style = TextStyle(
+//                fontSize = 22.sp,
+//                fontWeight = FontWeight.ExtraBold,
+//                color = MaterialTheme.colorScheme.onBackground
+//            )
+//        )
+//    }
+//
+//}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview3() {
+//    NewsAppTheme {
+//        SplashScreen()
+//    }
+//}
