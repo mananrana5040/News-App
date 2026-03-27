@@ -22,7 +22,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +35,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +51,8 @@ import coil3.compose.AsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
 import com.example.shared.model.News
+import com.example.shared.model.toBookmarkEntity
+import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
 import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
@@ -56,9 +64,11 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun MainScreen(
     viewModel: NewsViewModel,
+    bookmarkViewModel: BookmarkViewModel,
     onBreakingCardClick: () -> Unit,
     onSettingClick: () -> Unit,
-    onNewsItemClick: (News) -> Unit
+    onNewsItemClick: (News) -> Unit,
+    onBookMarkClick: () -> Unit
 ) {
     Column(
         Modifier
@@ -66,10 +76,10 @@ fun MainScreen(
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
-        TopBar(onSettingClick = onSettingClick)
+        TopBar(onSettingClick = onSettingClick, onBookMarkClick = onBookMarkClick)
 
         val breakingNews = viewModel.breakingNews.value
-        BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick)
+        BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick, bookmarkViewModel)
 
 
         val currentCategory = viewModel.selectedCategory.value
@@ -80,27 +90,27 @@ fun MainScreen(
             })
 
 
-        NewsList(viewModel, onNewsItemClick = onNewsItemClick)
+        NewsList(viewModel, bookmarkViewModel, onNewsItemClick = onNewsItemClick)
     }
 }
 
 @Composable
-fun TopBar(onSettingClick: () -> Unit) {
+fun TopBar(onSettingClick: () -> Unit, onBookMarkClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        Image(
-//            painter = painterResource(Res.drawable.img_user),
-//            contentDescription = null,
-//            modifier = Modifier
-//                .size(45.dp)
-//                .clickable(enabled = true, onClick = onSettingClick)
-//                .clip(CircleShape),
-//            contentScale = ContentScale.Crop
-//        )
+        Image(
+            painter = painterResource(Res.drawable.img_user),
+            contentDescription = null,
+            modifier = Modifier
+                .size(45.dp)
+                .clickable(enabled = true, onClick = onSettingClick)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
         Spacer(Modifier.width(15.dp))
 
         val currentDate = currentDateDisplay()
@@ -113,12 +123,36 @@ fun TopBar(onSettingClick: () -> Unit) {
             ),
             modifier = Modifier.clickable(enabled = true, onClick = onSettingClick)
         )
+
+        Spacer(Modifier.weight(1f))
+
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.onPrimary)
+                .clickable(true, onClick = onBookMarkClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Bookmarks,
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(28.dp)
+            )
+        }
     }
 
 }
 
 @Composable
-fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
+fun BreakingNewsCard(
+    news: News?,
+    onBreakingCardClick: () -> Unit,
+    bookmarkViewModel: BookmarkViewModel
+) {
+    val isCurrentItemBookmarked by bookmarkViewModel.isBookmarked(news?.url ?: "")
+        .collectAsState(initial = false)
 
     Column(
         Modifier
@@ -189,6 +223,25 @@ fun BreakingNewsCard(news: News?, onBreakingCardClick: () -> Unit) {
                     modifier = Modifier.padding(start = 5.dp)
                 )
 
+                Spacer(modifier = Modifier.weight(1f))
+
+                Icon(
+                    imageVector = Icons.Default.Bookmark,
+                    contentDescription = "",
+                    tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                    modifier = Modifier.size(18.dp).clickable {
+                        if (isCurrentItemBookmarked) {
+                            bookmarkViewModel.removeBookmark(
+                                news?.toBookmarkEntity() ?: return@clickable
+                            )
+                        } else {
+                            bookmarkViewModel.addBookmark(
+                                news?.toBookmarkEntity() ?: return@clickable
+                            )
+
+                        }
+                    }
+                )
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(
@@ -266,11 +319,14 @@ fun Categories(
 }
 
 @Composable
-fun NewsList(viewModel: NewsViewModel, onNewsItemClick: (News) -> Unit) {
+fun NewsList(
+    viewModel: NewsViewModel,
+    bookmarkViewModel: BookmarkViewModel,
+    onNewsItemClick: (News) -> Unit
+) {
 
     val news = viewModel.articles.value
     val loading = viewModel.isLoading.value
-
 
     LazyColumn(
         Modifier
@@ -282,9 +338,22 @@ fun NewsList(viewModel: NewsViewModel, onNewsItemClick: (News) -> Unit) {
         items(
             news.drop(1),
             key = { article -> article.urlToImage ?: article.title }) { items ->
+            val isCurrentItemBookmarked by bookmarkViewModel.isBookmarked(items.url)
+                .collectAsState(initial = false)
             NewsItem(
                 items,
-                onNewsItemClick = onNewsItemClick
+                isBookmarked = isCurrentItemBookmarked,
+                onNewsItemClick = onNewsItemClick,
+                onBookmarkToggle = {
+                    if (isCurrentItemBookmarked) {
+                        bookmarkViewModel.removeBookmark(items.toBookmarkEntity())
+                    } else {
+                        bookmarkViewModel.addBookmark(items.toBookmarkEntity())
+
+                    }
+
+
+                }
             )
         }
 
@@ -319,14 +388,15 @@ fun NewsList(viewModel: NewsViewModel, onNewsItemClick: (News) -> Unit) {
 @Composable
 fun NewsItem(
     news: News,
-    onNewsItemClick: (News) -> Unit
-
+    isBookmarked: Boolean,
+    onNewsItemClick: (News) -> Unit,
+    onBookmarkToggle: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .clickable(onClick = {onNewsItemClick(news)}),
+            .clickable(onClick = { onNewsItemClick(news) }),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -379,6 +449,15 @@ fun NewsItem(
                     modifier = Modifier.padding(start = 5.dp)
                 )
 
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Default.Bookmark,
+                    contentDescription = "",
+                    tint = if (isBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                    modifier = Modifier.size(18.dp).clickable {
+                        onBookmarkToggle()
+                    }
+                )
                 Spacer(modifier = Modifier.weight(1f))
 
                 Icon(

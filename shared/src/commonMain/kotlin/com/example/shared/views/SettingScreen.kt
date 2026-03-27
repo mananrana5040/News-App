@@ -76,8 +76,8 @@ fun ContentTopBar(
         }
 
         Text(
-            "Setting",
-            Modifier.padding(start = 16.dp),
+            "Settings",
+            Modifier.padding(start = 24.dp),
             style = TextStyle(fontWeight = FontWeight.Bold),
             fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onBackground

@@ -1,8 +1,13 @@
 package com.example.shared.koin
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.shared.api.NewsApiService
+import com.example.shared.database.AppDatabase
+import com.example.shared.database.getDatabaseBuilder
 import com.example.shared.preference.ThemeManager
+import com.example.shared.repository.BookmarkRepository
 import com.example.shared.repository.NewsRepository
+import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -26,4 +31,18 @@ val commonModule = module {
     factory { NewsViewModel(get()) }
 
     single { ThemeManager(get()) }
+}
+
+val databaseModule = module {
+    single<AppDatabase> {
+        getDatabaseBuilder()
+            .setDriver(BundledSQLiteDriver())
+            .fallbackToDestructiveMigration(true)
+            .build()
+    }
+
+    single { get<AppDatabase>().bookmarkDao() }
+    single { BookmarkRepository(get()) }
+    factory { BookmarkViewModel(get()) }
+
 }

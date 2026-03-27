@@ -29,7 +29,7 @@ class SplashActivity : ComponentActivity() {
             NewsAppTheme(darkTheme = finalThemeValue) {
                 SplashScreen(
                     onSplashFinished = {
-                        startActivity(Intent(this, MainActivity::class.java))
+                        startActivity(Intent(this, AuthActivity::class.java))
                         finish()
                     }
                 )

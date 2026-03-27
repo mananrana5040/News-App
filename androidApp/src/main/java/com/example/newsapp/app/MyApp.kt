@@ -2,7 +2,7 @@ package com.example.newsapp.app
 
 import android.app.Application
 import com.example.shared.koin.commonModule
-import com.example.shared.koin.initKoin
+import com.example.shared.koin.databaseModule
 import com.example.shared.preference.platformModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -13,7 +13,7 @@ class MyApp: Application() {
 
         startKoin {
             androidContext(this@MyApp)
-            modules(commonModule, platformModule)
+            modules(commonModule, platformModule, databaseModule)
         }
     }
 }
