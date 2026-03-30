@@ -3,7 +3,9 @@ agp = "9.0.1"
 coilCompose = "3.4.0"
 coreKtx = "1.17.0"
 datastorePreferences = "1.2.0"
+firebaseAuth = "2.4.0"
 firebaseBom = "34.11.0"
+firebaseFirestore = "2.4.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
@@ -67,6 +69,10 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+gitlive-firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
+firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebaseFirestore" }
+
+
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 

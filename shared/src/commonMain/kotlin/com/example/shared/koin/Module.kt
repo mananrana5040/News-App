@@ -7,6 +7,7 @@ import com.example.shared.database.getDatabaseBuilder
 import com.example.shared.preference.ThemeManager
 import com.example.shared.repository.BookmarkRepository
 import com.example.shared.repository.NewsRepository
+import com.example.shared.viewmodel.AuthViewModel
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
 import io.ktor.client.HttpClient
@@ -29,6 +30,8 @@ val commonModule = module {
     single { NewsRepository(get()) }
 
     factory { NewsViewModel(get()) }
+
+    factory { AuthViewModel(get()) }
 
     single { ThemeManager(get()) }
 }

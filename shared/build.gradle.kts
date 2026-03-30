@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    id("com.google.gms.google-services")
 
 }
 
@@ -100,8 +101,8 @@ kotlin {
                 implementation(libs.androidx.sqlite.bundled)
 
 
-                implementation(project.dependencies.platform(libs.firebase.bom))
-                implementation(libs.firebase.auth)
+                implementation(libs.gitlive.firebase.auth)
+                implementation(libs.firebase.firestore)
             }
         }
 
@@ -118,6 +119,9 @@ kotlin {
                 // dependencies declared in commonMain.
 
                 implementation(libs.ktor.client.okhttp)
+                implementation(project.dependencies.platform(libs.firebase.bom))
+                implementation(libs.firebase.auth)
+
             }
         }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.shared.preference.ThemeManager
 import com.example.shared.views.SplashScreen
+import dev.gitlive.firebase.auth.auth
 import org.koin.android.ext.android.inject
 
 @SuppressLint("CustomSplashScreen")
@@ -29,8 +30,16 @@ class SplashActivity : ComponentActivity() {
             NewsAppTheme(darkTheme = finalThemeValue) {
                 SplashScreen(
                     onSplashFinished = {
-                        startActivity(Intent(this, AuthActivity::class.java))
-                        finish()
+                        val auth = dev.gitlive.firebase.Firebase.auth
+                        val currentUser = auth.currentUser
+                        if (currentUser != null) {
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        } else {
+                            startActivity(Intent(this, AuthActivity::class.java))
+                            finish()
+                        }
+
                     }
                 )
 

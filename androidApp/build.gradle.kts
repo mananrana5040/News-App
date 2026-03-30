@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -67,5 +69,9 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.gitlive.firebase.auth)
+    implementation(project.dependencies.platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
 
 }

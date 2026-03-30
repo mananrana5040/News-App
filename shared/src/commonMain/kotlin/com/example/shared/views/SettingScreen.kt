@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -33,7 +35,9 @@ import androidx.compose.ui.unit.sp
 fun SettingScreen(
     onBackClick: () -> Unit,
     currentTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    email: String,
+    onSignOut: () -> Unit
 ) {
 
     Column(
@@ -43,7 +47,13 @@ fun SettingScreen(
             .statusBarsPadding()
     ) {
 
-        ContentTopBar(onBackClick = onBackClick, currentTheme, onThemeChange = onThemeChange)
+        ContentTopBar(
+            onBackClick = onBackClick,
+            currentTheme,
+            onThemeChange = onThemeChange,
+            email = email,
+            onSignOut = onSignOut
+        )
     }
 }
 
@@ -51,7 +61,9 @@ fun SettingScreen(
 fun ContentTopBar(
     onBackClick: () -> Unit,
     currentTheme: Boolean,
-    onThemeChange: (Boolean) -> Unit
+    onThemeChange: (Boolean) -> Unit,
+    email: String,
+    onSignOut: () -> Unit
 ) {
     Row(
         Modifier
@@ -106,5 +118,26 @@ fun ContentTopBar(
             onCheckedChange = { onThemeChange(it) }
         )
     }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Current User: $email",
+            style = TextStyle(fontWeight = FontWeight.Bold),
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Button(
+            onClick = onSignOut,
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6)),
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text("Sign out")
+        }
+    }
+
 
 }

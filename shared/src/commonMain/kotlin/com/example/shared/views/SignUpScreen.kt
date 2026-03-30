@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,15 +38,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.shared.viewmodel.AuthViewModel
 
 @Composable
 fun SignUpScreen(
     onNavigateToLogin: () -> Unit,
+    onSignUp: () -> Unit,
+    viewModel: AuthViewModel,
 ) {
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
     Column(
-        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 40.dp)
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
@@ -55,15 +68,15 @@ fun SignUpScreen(
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Sign in to continue",
+            text = "Sign up to continue",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
         )
 
         OutlinedTextField(
-            value = "",
-            onValueChange = { },
+            value = email,
+            onValueChange = { email = it },
             label = { Text("Email Address") },
             placeholder = { Text("example@mail.com") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
@@ -72,15 +85,15 @@ fun SignUpScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor  = Color(0xFF3B82F6)
+                focusedLabelColor = Color(0xFF3B82F6)
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = { },
+            value = password,
+            onValueChange = { password = it },
             label = { Text("Password") },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -88,14 +101,46 @@ fun SignUpScreen(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor  = Color(0xFF3B82F6)
+                focusedLabelColor = Color(0xFF3B82F6)
             )
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirm Password") },
+            leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF3B82F6),
+                focusedLabelColor = Color(0xFF3B82F6)
+            )
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (viewModel.authError != null) {
+            Text(
+                viewModel.authError!!,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+                if (password == confirmPassword) {
+                    viewModel.signUp(email, password, onSignUp)
+                } else {
+                    viewModel.authError = "Passwords do not match"
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
@@ -104,18 +149,26 @@ fun SignUpScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
 
         ) {
-            Text("Login", fontSize = 18.sp, color = Color(0xFFFFFFFF))
+            if (viewModel.isLoading) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.align(Alignment.CenterVertically))
+            }else{
+                Text("Sign up", fontSize = 18.sp, color = Color(0xFFFFFFFF))
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = {onNavigateToLogin()}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+        TextButton(
+            onClick = { onNavigateToLogin() },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
             Text(
-                "Don't have an account? Sign Up",
+                "Already have an account? Login",
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
     }
 
 }
+
 

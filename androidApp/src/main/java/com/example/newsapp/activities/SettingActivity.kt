@@ -1,5 +1,6 @@
 package com.example.newsapp.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.shared.preference.ThemeManager
+import com.example.shared.viewmodel.AuthViewModel
 import com.example.shared.views.SettingScreen
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -19,6 +23,8 @@ class SettingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val themeManager: ThemeManager by inject()
+        val viewModel: AuthViewModel by inject()
+
         setContent {
 
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
@@ -35,7 +41,14 @@ class SettingActivity : ComponentActivity() {
                         lifecycleScope.launch {
                             themeManager.setDarkMode(newValue)
                         }
-                    })
+                    },
+                    email = Firebase.auth.currentUser?.email ?: "",
+                    onSignOut = {
+                        viewModel.logout()
+                        finishAffinity()
+                        startActivity(Intent(this, SplashActivity::class.java))
+                    }
+                )
             }
         }
     }

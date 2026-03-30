@@ -54,6 +54,7 @@ fun BookmarkScreen(
     bookmarkViewModel: BookmarkViewModel,
     onBookmarkItemClick: (BookmarkEntity) -> Unit
 ) {
+    bookmarkViewModel.syncFromCloud()
     Column(
         Modifier
             .fillMaxSize()
