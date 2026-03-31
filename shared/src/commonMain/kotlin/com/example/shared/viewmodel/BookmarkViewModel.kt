@@ -13,17 +13,10 @@ import kotlinx.coroutines.launch
 
 class BookmarkViewModel(private val repository: BookmarkRepository) : ViewModel() {
     val bookmarks = repository.getBookmarks()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun removeBookmark(article: BookmarkEntity) {
+    fun toggleBookmark(article: BookmarkEntity, isBookmarked: Boolean) {
         viewModelScope.launch {
-            repository.toggleBookmark(article, true)
-        }
-    }
-
-    fun addBookmark(article: BookmarkEntity) {
-        viewModelScope.launch {
-            repository.toggleBookmark(article, false)
+            repository.toggleBookmark(article, isBookmarked)
         }
     }
 

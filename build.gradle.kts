@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.android.lint) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
+    id("com.codingfeline.buildkonfig") version "0.17.1" apply false
 }

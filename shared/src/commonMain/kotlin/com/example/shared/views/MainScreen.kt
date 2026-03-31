@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Bookmarks
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
@@ -48,8 +49,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
+import com.example.shared.helper.shimmerEffect
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel
@@ -179,13 +182,25 @@ fun BreakingNewsCard(
                     onClick = onBreakingCardClick
                 )
         ) {
-            AsyncImage(
+            SubcomposeAsyncImage(
                 news?.urlToImage ?: Res.drawable.ic_launcher_background,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(24.dp)),
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(30.dp),
+                            color = Color(0xFF3B82F6)
+                        )
+                    }
+                },
+
                 contentScale = ContentScale.Crop
             )
 
@@ -231,12 +246,14 @@ fun BreakingNewsCard(
                     tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
                     modifier = Modifier.size(18.dp).clickable {
                         if (isCurrentItemBookmarked) {
-                            bookmarkViewModel.removeBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable
+                            bookmarkViewModel.toggleBookmark(
+                                news?.toBookmarkEntity() ?: return@clickable,
+                                true
                             )
                         } else {
-                            bookmarkViewModel.addBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable
+                            bookmarkViewModel.toggleBookmark(
+                                news?.toBookmarkEntity() ?: return@clickable,
+                                false
                             )
 
                         }
@@ -346,9 +363,9 @@ fun NewsList(
                 onNewsItemClick = onNewsItemClick,
                 onBookmarkToggle = {
                     if (isCurrentItemBookmarked) {
-                        bookmarkViewModel.removeBookmark(items.toBookmarkEntity())
+                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), true)
                     } else {
-                        bookmarkViewModel.addBookmark(items.toBookmarkEntity())
+                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), false)
 
                     }
 
@@ -400,12 +417,23 @@ fun NewsItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        AsyncImage(
+        SubcomposeAsyncImage(
             news.urlToImage ?: "null",
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(16.dp)),
+            loading = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp),
+                        color = Color(0xFF3B82F6)
+                    )
+                }
+            },
             contentScale = ContentScale.Crop
         )
 
@@ -484,3 +512,4 @@ fun NewsItem(
 
     }
 }
+

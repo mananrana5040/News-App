@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
 import com.example.shared.model.News
 import kotlinx.datetime.TimeZone
@@ -50,7 +51,7 @@ import kotlin.time.Instant
 @Composable
 fun ContentScreen(
     onBackClick: () -> Unit,
-    news: News?,
+    news: BookmarkEntity?,
     onReadMoreClick: () -> Unit,
     onShareItem: () -> Unit
 ) {
@@ -73,7 +74,8 @@ fun ContentTopBar(onBackClick: () -> Unit, onShareItem: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .statusBarsPadding(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -116,7 +118,7 @@ fun ContentTopBar(onBackClick: () -> Unit, onShareItem: () -> Unit) {
 
 
 @Composable
-fun ContentMainCard(news: News?, onReadMoreClick: () -> Unit) {
+fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()

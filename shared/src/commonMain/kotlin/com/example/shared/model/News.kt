@@ -1,5 +1,6 @@
 package com.example.shared.model
 
+import com.example.shared.PlatformSerializable
 import com.example.shared.database.BookmarkEntity
 import kotlinx.serialization.Serializable
 
@@ -12,7 +13,7 @@ data class News(
     val publishedAt: String,
     val content: String?,
     val url: String
-)
+): PlatformSerializable
 
 
 fun News.toBookmarkEntity(): BookmarkEntity {

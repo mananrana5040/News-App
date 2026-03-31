@@ -2,6 +2,7 @@ package com.example.shared.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.shared.PlatformSerializable
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,4 +14,4 @@ data class BookmarkEntity(
     val urlToImage: String?,
     val publishedAt: String,
     val content: String?
-)
+): PlatformSerializable

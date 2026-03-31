@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -8,7 +9,16 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
     id("com.google.gms.google-services")
+    id("com.codingfeline.buildkonfig")
 
+}
+
+buildkonfig{
+    packageName = "com.example.newsapp"
+    defaultConfigs {
+        buildConfigField(STRING, "API_KEY", "c53210620ab940dfaf0d88428026d707")
+        buildConfigField(STRING, "BASE_URL", "https://newsapi.org")
+    }
 }
 
 room {
@@ -16,7 +26,6 @@ room {
 }
 
 kotlin {
-
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
@@ -84,7 +93,7 @@ kotlin {
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.kotlinx.serialization.json)
+//                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.androidx.datastore.preferences)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.coil.compose)

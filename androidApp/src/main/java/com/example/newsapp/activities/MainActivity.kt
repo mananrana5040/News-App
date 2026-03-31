@@ -15,7 +15,6 @@ import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
 import com.example.shared.views.MainScreen
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.coroutines.EmptyCoroutineContext.get
@@ -41,8 +40,7 @@ class MainActivity : ComponentActivity() {
                     bookmarkViewModel,
                     onBreakingCardClick = {
                         val intent = Intent(this, ContentActivity::class.java)
-                        val newsJson = Json.encodeToString(viewModel.breakingNews.value)
-                        intent.putExtra("article_data", newsJson)
+                        intent.putExtra("article_data", viewModel.breakingNews.value)
                         startActivity(intent)
                     },
                     onSettingClick = {
@@ -51,8 +49,7 @@ class MainActivity : ComponentActivity() {
                     },
                     onNewsItemClick = { news ->
                         val intent = Intent(this, ContentActivity::class.java)
-                        val newsJson = Json.encodeToString(news)
-                        intent.putExtra("article_data", newsJson)
+                        intent.putExtra("article_data", news)
                         startActivity(intent)
                     },
                     onBookMarkClick = {

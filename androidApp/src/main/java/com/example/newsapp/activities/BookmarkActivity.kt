@@ -13,7 +13,6 @@ import com.example.shared.preference.ThemeManager
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.views.BookmarkScreen
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -29,7 +28,7 @@ class BookmarkActivity : ComponentActivity() {
             val finalThemeValue = isDarkThemePref ?: systemTheme
 
             val bookmarkViewModel = koinViewModel<BookmarkViewModel>()
-
+            bookmarkViewModel.syncFromCloud()
 
             NewsAppTheme(darkTheme = finalThemeValue) {
                 BookmarkScreen(
@@ -39,8 +38,7 @@ class BookmarkActivity : ComponentActivity() {
                     bookmarkViewModel,
                     onBookmarkItemClick = {bookmarkEntity ->
                         val intent = Intent(this, ContentActivity::class.java)
-                        val newsJson = Json.encodeToString(bookmarkEntity)
-                        intent.putExtra("article_data", newsJson)
+                        intent.putExtra("bookmark_data", bookmarkEntity)
                         startActivity(intent)
                     }
                 )
