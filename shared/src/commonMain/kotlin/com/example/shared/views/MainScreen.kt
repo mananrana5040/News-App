@@ -52,7 +52,6 @@ import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
-import com.example.shared.helper.shimmerEffect
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel

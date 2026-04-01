@@ -23,7 +23,7 @@ class BookmarkRepository(private val bookmarkDao: BookmarkDao) {
             .document(article.url.hashCode().toString())
 
         if (isBookmarked) {
-            bookmarkDao.deleteBookmark(article)
+            bookmarkDao.deleteBookmark(article.url)
             try { docRef.delete() } catch (e: Exception) { println("Error: $e") }
         } else {
             bookmarkDao.insertBookmark(article)

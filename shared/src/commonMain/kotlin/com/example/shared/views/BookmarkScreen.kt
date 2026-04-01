@@ -114,7 +114,7 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        items(items = bookmarkList) { bookmark ->
+        items(items = bookmarkList, key = { it.url }) { bookmark ->
             BookmarkItem(
                 bookmark,
                 onBookmarkItemClick = onBookmarkItemClick,

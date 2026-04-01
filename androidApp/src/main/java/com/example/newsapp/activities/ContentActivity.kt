@@ -150,7 +150,7 @@ fun Context.shareArticle(article: BookmarkEntity) {
         action = Intent.ACTION_SEND
         putExtra(
             Intent.EXTRA_TEXT,
-            "Check out this news: ${article?.title}\n\nRead more at: ${article?.url}"
+            "Check out this news: ${article.title}\n\nRead more at: ${article.url}"
         )
         type = "text/plain"
     }
