@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="title_activity_content">ContentActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_bookmark">BookmarkActivity</string>
+    <string name="title_activity_auth">AuthActivity</string>
+</resources>
