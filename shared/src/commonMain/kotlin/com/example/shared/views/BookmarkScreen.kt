@@ -38,15 +38,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.example.shared.database.BookmarkDao
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
+import com.example.shared.repository.BookmarkRepository
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
+
+@Preview
+@Composable
+fun Preview(){
+    BookmarkTopBar(onBackClick = { /*TODO*/ })
+}
 
 @Composable
 fun BookmarkScreen(
@@ -64,7 +73,6 @@ fun BookmarkScreen(
         BookmarkTopBar(onBackClick = onBackClick)
         BookmarkList(bookmarkViewModel = bookmarkViewModel, onBookmarkItemClick = onBookmarkItemClick)
     }
-
 }
 
 @Composable

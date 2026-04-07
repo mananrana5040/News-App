@@ -1,23 +1,21 @@
 package com.example.newsapp.activities
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.newsapp.extensions.isInternetAvailable
 import com.example.newsapp.ui.theme.NewsAppTheme
-import com.example.shared.database.AppDatabase
 import com.example.shared.helper.Screen
 import com.example.shared.preference.ThemeManager
 import com.example.shared.viewmodel.AuthViewModel
@@ -31,10 +29,9 @@ import com.example.shared.views.SplashScreen
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import org.koin.android.ext.android.inject
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.coroutines.EmptyCoroutineContext.get
+
 
 class MainActivity : ComponentActivity() {
 
@@ -44,6 +41,10 @@ class MainActivity : ComponentActivity() {
         val themeManager: ThemeManager by inject()
         val viewModel: AuthViewModel by inject()
         val bookmarkViewModel: BookmarkViewModel by inject()
+
+        if (!isInternetAvailable()){
+            Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_SHORT).show()
+        }
 
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Splash.route) {
                         SplashScreen(
                             onSplashFinished = {
-                                val auth = dev.gitlive.firebase.Firebase.auth
+                                val auth = Firebase.auth
                                 val currentUser = auth.currentUser
                                 if (currentUser != null) {
                                     navController.navigate(Screen.Main.route) {
@@ -165,4 +166,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

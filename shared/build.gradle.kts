@@ -99,12 +99,14 @@ kotlin {
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network.ktor3)
 
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.components.resources)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.material3)
+                implementation(libs.material.icons.extended)
+                implementation(libs.compose.resources)
+                implementation(libs.compose.ui.tooling.preview)
+
 
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.androidx.sqlite.bundled)
