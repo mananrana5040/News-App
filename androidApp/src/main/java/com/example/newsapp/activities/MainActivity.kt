@@ -118,9 +118,14 @@ class MainActivity : ComponentActivity() {
                             viewModel,
                             bookmarkViewModel,
                             onBreakingCardClick = {
-                                val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                intent.putExtra("article_data", viewModel.breakingNews.value)
-                                startActivity(intent)
+                                if (viewModel.breakingNews.value != null){
+                                    val intent = Intent(this@MainActivity, ContentActivity::class.java)
+                                    intent.putExtra("article_data", viewModel.breakingNews.value)
+                                    startActivity(intent)
+                                }else{
+                                    Toast.makeText(this@MainActivity, "News not loaded. Check Internet Connection.", Toast.LENGTH_SHORT).show()
+                                }
+
                             },
                             onSettingClick = {
                                 navController.navigate(Screen.Setting.route)

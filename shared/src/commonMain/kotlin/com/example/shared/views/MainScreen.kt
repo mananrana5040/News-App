@@ -188,6 +188,15 @@ fun BreakingNewsCard(
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(24.dp)),
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
+                    }
+                },
+
                 loading = {
                     Box(
                         modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
@@ -199,6 +208,7 @@ fun BreakingNewsCard(
                         )
                     }
                 },
+
 
                 contentScale = ContentScale.Crop
             )

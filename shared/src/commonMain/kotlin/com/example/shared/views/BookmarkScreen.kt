@@ -115,6 +115,12 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
 
     val bookmarkList by bookmarkViewModel.bookmarks.collectAsState(initial = emptyList())
 
+    if (bookmarkList.isEmpty()){
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            Text(text = "No Bookmarks", style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
+        }
+    }
+
     LazyColumn(
         Modifier
             .fillMaxWidth()
