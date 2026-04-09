@@ -56,6 +56,8 @@ import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.crashlytics.crashlytics
 import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
 import newsapp.shared.generated.resources.ic_launcher_background

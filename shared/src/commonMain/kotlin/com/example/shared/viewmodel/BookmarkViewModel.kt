@@ -3,12 +3,11 @@ package com.example.shared.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shared.database.BookmarkEntity
+import com.example.shared.helper.FirestorePaths
 import com.example.shared.repository.BookmarkRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class BookmarkViewModel(private val repository: BookmarkRepository) : ViewModel() {
@@ -27,9 +26,9 @@ class BookmarkViewModel(private val repository: BookmarkRepository) : ViewModel(
         viewModelScope.launch {
             try {
                 val snapshot = Firebase.firestore
-                    .collection("users")
+                    .collection(FirestorePaths.COLLECTION_USERS)
                     .document(userId)
-                    .collection("bookmarks")
+                    .collection(FirestorePaths.COLLECTION_BOOKMARKS)
                     .get()
 
                 val cloudBookmarks = snapshot.documents.map { doc ->

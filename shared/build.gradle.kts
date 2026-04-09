@@ -114,6 +114,7 @@ kotlin {
 
                 implementation(libs.gitlive.firebase.auth)
                 implementation(libs.firebase.firestore)
+                implementation(libs.firebase.crashlytics)
             }
         }
 

@@ -21,6 +21,7 @@ import com.example.shared.preference.ThemeManager
 import com.example.shared.viewmodel.AuthViewModel
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
+import com.example.shared.views.BookmarkScreen
 import com.example.shared.views.LoginScreen
 import com.example.shared.views.MainScreen
 import com.example.shared.views.SettingScreen
@@ -136,8 +137,7 @@ class MainActivity : ComponentActivity() {
                                 startActivity(intent)
                             },
                             onBookMarkClick = {
-                                val intent = Intent(this@MainActivity, BookmarkActivity::class.java)
-                                startActivity(intent)
+                                navController.navigate(Screen.Bookmark.route)
                             })
 
                     }
@@ -162,6 +162,21 @@ class MainActivity : ComponentActivity() {
                                         flags =
                                             Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                     }
+                                startActivity(intent)
+                            }
+                        )
+                    }
+
+                    composable(Screen.Bookmark.route) {
+                        bookmarkViewModel.syncFromCloud()
+                        BookmarkScreen(
+                            onBackClick = {
+                                navController.popBackStack()
+                            },
+                            bookmarkViewModel,
+                            onBookmarkItemClick = {bookmarkEntity ->
+                                val intent = Intent(this@MainActivity, ContentActivity::class.java)
+                                intent.putExtra("bookmark_data", bookmarkEntity)
                                 startActivity(intent)
                             }
                         )
