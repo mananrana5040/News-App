@@ -2,5 +2,10 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.kotlin.android) apply false
+    id("org.jetbrains.compose") version "1.10.0" apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.android.lint) apply false
+    id("com.google.gms.google-services") version "4.4.2" apply false
+    id("com.codingfeline.buildkonfig") version "0.17.1" apply false
 }
