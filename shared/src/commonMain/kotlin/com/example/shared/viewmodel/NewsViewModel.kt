@@ -1,17 +1,11 @@
 package com.example.shared.viewmodel
 
-import kotlin.collections.plus
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shared.model.News
 import com.example.shared.repository.NewsRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
     var articles = mutableStateOf<List<News>>(emptyList())

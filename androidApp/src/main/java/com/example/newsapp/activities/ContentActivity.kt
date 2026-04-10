@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.newsapp.extensions.shareArticle
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.model.News
@@ -143,17 +144,4 @@ class ContentActivity : ComponentActivity() {
 
         }
     }
-}
-
-fun Context.shareArticle(article: BookmarkEntity) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            "Check out this news: ${article?.title}\n\nRead more at: ${article?.url}"
-        )
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, "Share News via")
-    startActivity(shareIntent)
 }

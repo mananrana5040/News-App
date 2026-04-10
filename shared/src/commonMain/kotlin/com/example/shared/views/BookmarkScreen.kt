@@ -38,15 +38,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.example.shared.database.BookmarkDao
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
+import com.example.shared.repository.BookmarkRepository
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
+
+@Preview
+@Composable
+fun Preview(){
+    BookmarkTopBar(onBackClick = { /*TODO*/ })
+}
 
 @Composable
 fun BookmarkScreen(
@@ -64,7 +73,6 @@ fun BookmarkScreen(
         BookmarkTopBar(onBackClick = onBackClick)
         BookmarkList(bookmarkViewModel = bookmarkViewModel, onBookmarkItemClick = onBookmarkItemClick)
     }
-
 }
 
 @Composable
@@ -107,6 +115,12 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
 
     val bookmarkList by bookmarkViewModel.bookmarks.collectAsState(initial = emptyList())
 
+    if (bookmarkList.isEmpty()){
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            Text(text = "No Bookmarks", style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
+        }
+    }
+
     LazyColumn(
         Modifier
             .fillMaxWidth()
@@ -114,7 +128,7 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        items(items = bookmarkList) { bookmark ->
+        items(items = bookmarkList, key = { it.url }) { bookmark ->
             BookmarkItem(
                 bookmark,
                 onBookmarkItemClick = onBookmarkItemClick,

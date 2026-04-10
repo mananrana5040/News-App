@@ -52,11 +52,12 @@ import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
-import com.example.shared.helper.shimmerEffect
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.crashlytics.crashlytics
 import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
 import newsapp.shared.generated.resources.ic_launcher_background
@@ -189,6 +190,15 @@ fun BreakingNewsCard(
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(24.dp)),
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
+                    }
+                },
+
                 loading = {
                     Box(
                         modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
@@ -200,6 +210,7 @@ fun BreakingNewsCard(
                         )
                     }
                 },
+
 
                 contentScale = ContentScale.Crop
             )
