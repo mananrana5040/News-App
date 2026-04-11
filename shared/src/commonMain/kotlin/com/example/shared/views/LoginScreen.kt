@@ -35,6 +35,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shared.viewmodel.AuthViewModel
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.dont_have_acc
+import newsapp.shared.generated.resources.email_address
+import newsapp.shared.generated.resources.login_to_continue
+import newsapp.shared.generated.resources.password
+import newsapp.shared.generated.resources.welcome_back
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoginScreen(
@@ -54,7 +61,7 @@ fun LoginScreen(
         var password by remember { mutableStateOf("") }
 
         Text(
-            text = "Welcome Back",
+            text = stringResource(Res.string.welcome_back),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -62,7 +69,7 @@ fun LoginScreen(
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Please Log in to continue",
+            text = stringResource(Res.string.login_to_continue),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
@@ -71,7 +78,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email Address") },
+            label = { Text(stringResource(Res.string.email_address)) },
             placeholder = { Text("example@mail.com") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -88,7 +95,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it},
-            label = { Text("Password") },
+            label = { Text(stringResource(Res.string.password)) },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             singleLine = true,
@@ -133,7 +140,7 @@ fun LoginScreen(
 
         TextButton(onClick = {onNavigateToSignup()}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
             Text(
-                "Don't have an account? Sign Up",
+                stringResource(Res.string.dont_have_acc),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

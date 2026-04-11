@@ -39,6 +39,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shared.viewmodel.AuthViewModel
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.already_have_account
+import newsapp.shared.generated.resources.confirm_password
+import newsapp.shared.generated.resources.email_address
+import newsapp.shared.generated.resources.password
+import newsapp.shared.generated.resources.sign_up
+import newsapp.shared.generated.resources.sign_up_to_continue
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SignUpScreen(
@@ -60,7 +68,7 @@ fun SignUpScreen(
     ) {
 
         Text(
-            text = "Sign up",
+            text = stringResource(Res.string.sign_up),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -68,7 +76,7 @@ fun SignUpScreen(
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Sign up to continue",
+            text = stringResource(Res.string.sign_up_to_continue),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
@@ -77,7 +85,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email Address") },
+            label = { Text(stringResource(Res.string.email_address)) },
             placeholder = { Text("example@mail.com") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -94,7 +102,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(stringResource(Res.string.password)) },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             singleLine = true,
@@ -111,7 +119,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
+            label = { Text(stringResource(Res.string.confirm_password)) },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             singleLine = true,
@@ -152,7 +160,7 @@ fun SignUpScreen(
             if (viewModel.isLoading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.align(Alignment.CenterVertically))
             }else{
-                Text("Sign up", fontSize = 18.sp, color = Color(0xFFFFFFFF))
+                Text(stringResource(Res.string.sign_up), fontSize = 18.sp, color = Color(0xFFFFFFFF))
             }
         }
 
@@ -163,7 +171,7 @@ fun SignUpScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(
-                "Already have an account? Login",
+                stringResource(Res.string.already_have_account),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }

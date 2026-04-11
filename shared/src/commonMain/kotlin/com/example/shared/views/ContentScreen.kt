@@ -17,11 +17,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
 import com.example.shared.model.News
@@ -44,6 +47,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import newsapp.shared.generated.resources.Res
 import newsapp.shared.generated.resources.ic_launcher_background
+import newsapp.shared.generated.resources.read_full_news
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -125,18 +130,39 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            news?.urlToImage ?: Res.drawable.ic_launcher_background,
+        SubcomposeAsyncImage(
+            news?.urlToImage,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .clip(RoundedCornerShape(24.dp)),
-            contentScale = ContentScale.Crop
-        )
+            contentScale = ContentScale.Crop,
+            error = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
+                }
+            },
+
+            loading = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp),
+                        color = Color(0xFF3B82F6)
+                    )
+                }
+            },
+
+            )
 
         Text(
-            text = news?.title ?: "Breaking News Loading",
+            text = news?.title ?: "",
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -153,12 +179,12 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
 
             Icon(
                 imageVector = Icons.Default.DateRange,
-                contentDescription = "Search",
+                contentDescription = "",
                 tint = Color(0xFF9A98A5),
                 modifier = Modifier.size(18.dp)
             )
 
-            val formatDate = formatDate(news?.publishedAt ?: "2026-03-05T04:43:00Z")
+            val formatDate = formatDate(news?.publishedAt ?: "")
 
             Text(
                 formatDate, style = TextStyle(
@@ -179,7 +205,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             )
 
             Text(
-                news?.author ?: "Author", style = TextStyle(
+                news?.author ?: "", style = TextStyle(
                     fontSize = 14.sp,
                     color = Color(0xFF9A98A5),
                     fontWeight = FontWeight.Medium
@@ -191,10 +217,8 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             )
         }
 
-        val lorumIpsum =
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
         Text(
-            news?.content ?: lorumIpsum, Modifier.padding(horizontal = 12.dp), style = TextStyle(
+            news?.content ?: "", Modifier.padding(horizontal = 12.dp), style = TextStyle(
                 fontSize = 18.sp,
                 color = Color(0xFF9A98A5),
                 lineHeight = 26.sp,
@@ -208,7 +232,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             onClick = onReadMoreClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
         ) {
-            Text("Read Full News", color = Color(0xFFFFFFFF))
+            Text(stringResource(Res.string.read_full_news), color = Color(0xFFFFFFFF))
         }
 
 

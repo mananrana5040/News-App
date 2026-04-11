@@ -1,0 +1,20 @@
+<resources>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="no_bookmarks">No Bookmarks</string>
+    <string name="read_full_news">Read Full News</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="login_to_continue">Please Log in to continue</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="dont_have_acc">Don't have an account? Sign Up</string>
+    <string name="breaking_news">Breaking News</string>
+    <string name="load_more_news">Load More News</string>
+    <string name="settings">Settings</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="current_user">Current User</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_to_continue">Sign up to Continue</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="already_have_account">Already have an account? Login</string>
+    <string name="app_name">News App</string>
+</resources>
