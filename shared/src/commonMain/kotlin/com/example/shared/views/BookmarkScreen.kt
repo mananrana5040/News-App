@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,14 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.shared.database.BookmarkDao
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
-import com.example.shared.model.News
-import com.example.shared.model.toBookmarkEntity
-import com.example.shared.repository.BookmarkRepository
 import com.example.shared.viewmodel.BookmarkViewModel
-import com.example.shared.viewmodel.NewsViewModel
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.bookmarks
+import newsapp.shared.generated.resources.no_bookmarks
+import org.jetbrains.compose.resources.stringResource
 
 @Preview
 @Composable
@@ -100,7 +97,7 @@ fun BookmarkTopBar(onBackClick: () -> Unit) {
         }
 
         Text(
-            "Bookmarks",
+            text = stringResource(Res.string.bookmarks),
             Modifier.padding(start = 24.dp),
             style = TextStyle(fontWeight = FontWeight.Bold),
             fontSize = 18.sp,
@@ -117,7 +114,7 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
 
     if (bookmarkList.isEmpty()){
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Text(text = "No Bookmarks", style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
+            Text(text = stringResource(Res.string.no_bookmarks), style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
         }
     }
 
@@ -157,7 +154,7 @@ fun BookmarkItem(
     ) {
 
         AsyncImage(
-            bookmark.urlToImage ?: "null",
+            bookmark.urlToImage,
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)

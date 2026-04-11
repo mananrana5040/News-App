@@ -60,9 +60,12 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.crashlytics.crashlytics
 import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.breaking_news
 import newsapp.shared.generated.resources.ic_launcher_background
 import newsapp.shared.generated.resources.img_user
+import newsapp.shared.generated.resources.load_more_news
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -165,7 +168,7 @@ fun BreakingNewsCard(
     ) {
 
         Text(
-            "Breaking News", style = TextStyle(
+            stringResource(Res.string.breaking_news), style = TextStyle(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -184,7 +187,7 @@ fun BreakingNewsCard(
                 )
         ) {
             SubcomposeAsyncImage(
-                news?.urlToImage ?: Res.drawable.ic_launcher_background,
+                news?.urlToImage,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -216,7 +219,7 @@ fun BreakingNewsCard(
             )
 
             Text(
-                text = news?.title ?: "Breaking News Loading",
+                text = news?.title ?: "",
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -233,12 +236,12 @@ fun BreakingNewsCard(
 
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "Search",
+                    contentDescription = "",
                     tint = Color(0xFF9A98A5),
                     modifier = Modifier.size(18.dp)
                 )
 
-                val formatDate = formatDate(news?.publishedAt ?: "2026-03-05T04:43:00Z")
+                val formatDate = formatDate(news?.publishedAt ?: "")
 
                 Text(
                     formatDate, style = TextStyle(
@@ -280,7 +283,7 @@ fun BreakingNewsCard(
                 )
 
                 Text(
-                    news?.author ?: "Author", style = TextStyle(
+                    news?.author ?: "", style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium
@@ -398,7 +401,7 @@ fun NewsList(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Load More News",
+                        text = stringResource(Res.string.load_more_news),
                         style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
                         modifier = Modifier.clickable {
                             viewModel.loadNextPage()
@@ -429,7 +432,7 @@ fun NewsItem(
     ) {
 
         SubcomposeAsyncImage(
-            news.urlToImage ?: "null",
+            news.urlToImage,
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)

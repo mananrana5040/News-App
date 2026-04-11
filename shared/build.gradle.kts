@@ -16,7 +16,7 @@ plugins {
 buildkonfig{
     packageName = "com.example.newsapp"
     defaultConfigs {
-        buildConfigField(STRING, "API_KEY", "c53210620ab940dfaf0d88428026d707")
+        buildConfigField(STRING, "API_KEY", "d2a75ad5b0a8488f9e8330c73661a2ca")
         buildConfigField(STRING, "BASE_URL", "https://newsapi.org")
     }
 }
