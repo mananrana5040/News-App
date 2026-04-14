@@ -58,8 +58,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
-            val systemTheme = isSystemInDarkTheme()
-            val finalThemeValue = isDarkThemePref ?: systemTheme
+            val finalThemeValue = isDarkThemePref ?: false
             SideEffect {
                 enableEdgeToEdge(
                     statusBarStyle = if (finalThemeValue) {
