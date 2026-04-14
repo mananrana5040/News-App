@@ -106,7 +106,7 @@ fun TopBar(onSettingClick: () -> Unit, onBookMarkClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -164,7 +164,7 @@ fun BreakingNewsCard(
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = 24.dp)
     ) {
 
         Text(
@@ -173,7 +173,7 @@ fun BreakingNewsCard(
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Card(
@@ -182,117 +182,126 @@ fun BreakingNewsCard(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(
-                    onClick = onBreakingCardClick
-                )
         ) {
-            SubcomposeAsyncImage(
-                news?.urlToImage,
-                contentDescription = null,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(24.dp)),
-                error = {
-                    Box(
-                        modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
-                    }
-                },
-
-                loading = {
-                    Box(
-                        modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(30.dp),
-                            color = Color(0xFF3B82F6)
-                        )
-                    }
-                },
-
-
-                contentScale = ContentScale.Crop
-            )
-
-            Text(
-                text = news?.title ?: "",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                ),
-                maxLines = 2,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
-            )
-
-            Row(
-                modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .clickable(onClick = onBreakingCardClick)
             ) {
 
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
-
-                val formatDate = formatDate(news?.publishedAt ?: "")
-
-                Text(
-                    formatDate, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium
-                    ),
-                    modifier = Modifier.padding(start = 5.dp)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Icon(
-                    imageVector = Icons.Default.Bookmark,
-                    contentDescription = "",
-                    tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp).clickable {
-                        if (isCurrentItemBookmarked) {
-                            bookmarkViewModel.toggleBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable,
-                                true
-                            )
-                        } else {
-                            bookmarkViewModel.toggleBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable,
-                                false
-                            )
-
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.weight(1f))
-
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
-
-                Text(
-                    news?.author ?: "", style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium
-                    ),
+                SubcomposeAsyncImage(
+                    news?.urlToImage,
+                    contentDescription = null,
                     modifier = Modifier
-                        .padding(start = 5.dp)
-                        .width(100.dp),
-                    maxLines = 1
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(24.dp)),
+                    error = {
+                        Box(
+                            modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.BrokenImage,
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp),
+                                color = Color(0xFF3B82F6)
+                            )
+                        }
+                    },
+
+
+                    contentScale = ContentScale.Crop
                 )
+
+                Text(
+                    text = news?.title ?: "",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    maxLines = 2,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+                )
+
+                Row(
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "",
+                        tint = Color(0xFF9A98A5),
+                        modifier = Modifier.size(18.dp)
+                    )
+
+                    val formatDate = formatDate(news?.publishedAt ?: "")
+
+                    Text(
+                        formatDate, style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color(0xFF9A98A5),
+                            fontWeight = FontWeight.Medium
+                        ),
+                        modifier = Modifier.padding(start = 5.dp)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = Icons.Default.Bookmark,
+                        contentDescription = "",
+                        tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                        modifier = Modifier.size(18.dp).clickable {
+                            if (isCurrentItemBookmarked) {
+                                bookmarkViewModel.toggleBookmark(
+                                    news?.toBookmarkEntity() ?: return@clickable,
+                                    true
+                                )
+                            } else {
+                                bookmarkViewModel.toggleBookmark(
+                                    news?.toBookmarkEntity() ?: return@clickable,
+                                    false
+                                )
+
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "",
+                        tint = Color(0xFF9A98A5),
+                        modifier = Modifier.size(18.dp)
+                    )
+
+                    Text(
+                        news?.author ?: "", style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color(0xFF9A98A5),
+                            fontWeight = FontWeight.Medium
+                        ),
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .width(100.dp),
+                        maxLines = 1
+                    )
+                }
+
             }
         }
 
@@ -311,7 +320,7 @@ fun Categories(
     LazyRow(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 18.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(32.dp)
     ) {
 
@@ -362,7 +371,7 @@ fun NewsList(
     LazyColumn(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
+            .padding(bottom = 18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
@@ -437,6 +446,14 @@ fun NewsItem(
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(16.dp)),
+            error = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
+                }
+            },
             loading = {
                 Box(
                     modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
@@ -502,15 +519,17 @@ fun NewsItem(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
+                if (news.author != null) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "",
+                        tint = Color(0xFF9A98A5),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
 
                 Text(
-                    news.author ?: "author", style = TextStyle(
+                    news.author ?: "", style = TextStyle(
                         fontSize = 14.sp,
                         color = Color(0xFF9A98A5),
                         fontWeight = FontWeight.Medium,

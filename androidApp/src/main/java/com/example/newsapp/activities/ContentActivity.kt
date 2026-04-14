@@ -8,6 +8,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,7 +46,6 @@ class ContentActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         val article: BookmarkEntity
         if (intent.hasExtra("article_data")) {
@@ -60,6 +61,15 @@ class ContentActivity : ComponentActivity() {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
             val systemTheme = isSystemInDarkTheme()
             val finalThemeValue = isDarkThemePref ?: systemTheme
+            SideEffect {
+                enableEdgeToEdge(
+                    statusBarStyle = if (finalThemeValue) {
+                        SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+                    }
+                )
+            }
 
             var showWebView by remember { mutableStateOf(false) }
 

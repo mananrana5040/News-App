@@ -218,7 +218,8 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
         }
 
         Text(
-            news?.content ?: "", Modifier.padding(horizontal = 12.dp), style = TextStyle(
+
+            news?.content?.cleanNewsContent() ?: "", Modifier.padding(horizontal = 12.dp), style = TextStyle(
                 fontSize = 18.sp,
                 color = Color(0xFF9A98A5),
                 lineHeight = 26.sp,
@@ -238,5 +239,10 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
 
     }
 
+}
+
+fun String.cleanNewsContent(): String {
+    val regex = Regex("""\s*\[\+\d+\s+chars]$""")
+    return this.replace(regex, "").trim()
 }
 

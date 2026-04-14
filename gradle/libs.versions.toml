@@ -6,6 +6,7 @@ coreKtx = "1.17.0"
 datastorePreferences = "1.2.0"
 firebaseAuth = "2.4.0"
 firebaseBom = "34.11.0"
+firebaseConfig = "2.4.0"
 firebaseCrashlytics = "2.4.0"
 firebaseFirestore = "2.4.0"
 junit = "4.13.2"
@@ -39,6 +40,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCo
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
 compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebaseConfig" }
 firebase-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

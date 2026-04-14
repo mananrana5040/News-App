@@ -121,7 +121,7 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
     LazyColumn(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
+            .padding(bottom = 25.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
@@ -159,7 +159,7 @@ fun BookmarkItem(
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         Spacer(modifier = Modifier.width(16.dp))

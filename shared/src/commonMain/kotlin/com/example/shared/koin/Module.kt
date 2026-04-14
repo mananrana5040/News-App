@@ -2,6 +2,7 @@ package com.example.shared.koin
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.shared.api.NewsApiService
+import com.example.shared.config.ApiKeyManager
 import com.example.shared.database.AppDatabase
 import com.example.shared.database.getDatabaseBuilder
 import com.example.shared.preference.ThemeManager
@@ -22,12 +23,15 @@ val commonModule = module {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
+            expectSuccess = true
         }
     }
 
-    single { NewsApiService(get()) }
+    single { NewsApiService(get(), get()) }
 
     single { NewsRepository(get()) }
+
+    single { ApiKeyManager() }
 
     factory { NewsViewModel(get()) }
 

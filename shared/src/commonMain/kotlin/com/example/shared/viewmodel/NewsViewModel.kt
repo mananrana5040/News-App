@@ -17,21 +17,9 @@ class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
     var currentPage = 1
 
     init {
-        fetchBreakingNews()
         fetchNews("general")
     }
 
-    private fun fetchBreakingNews() {
-        viewModelScope.launch {
-            try {
-                val response = repository.getNewsByCategory("general")
-                if (response.isNotEmpty()) {
-                    breakingNews.value = response[0]
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
 
     fun loadNextPage() {
         currentPage++
@@ -59,6 +47,7 @@ class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
             isLoading.value = true
             try {
                 articles.value += repository.getNewsByCategory(category, page)
+                breakingNews.value = articles.value[0]
                 println("KMP_DEBUG: Successfully fetched ${articles.value.size} articles")
             } catch (e: Exception) {
                 println("KMP_DEBUG: Error fetching news: ${e.message}")
