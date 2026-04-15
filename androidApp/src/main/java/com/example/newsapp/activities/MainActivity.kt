@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.extensions.isInternetAvailable
 import com.example.newsapp.ui.theme.NewsAppTheme
 import com.example.shared.config.ApiKeyManager
+import com.example.shared.constants.AppConstants
 import com.example.shared.helper.Screen
 import com.example.shared.preference.ThemeManager
 import com.example.shared.viewmodel.AuthViewModel
@@ -138,7 +139,7 @@ class MainActivity : ComponentActivity() {
                             onBreakingCardClick = {
                                 if (viewModel.breakingNews.value != null){
                                     val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                    intent.putExtra("article_data", viewModel.breakingNews.value)
+                                    intent.putExtra(AppConstants.KEY_ARTICLE_DATA, viewModel.breakingNews.value)
                                     startActivity(intent)
                                 }else{
                                     Toast.makeText(this@MainActivity, "News not loaded. Check Internet Connection.", Toast.LENGTH_SHORT).show()
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
                             },
                             onNewsItemClick = { news ->
                                 val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                intent.putExtra("article_data", news)
+                                intent.putExtra(AppConstants.KEY_ARTICLE_DATA, news)
                                 startActivity(intent)
                             },
                             onBookMarkClick = {
@@ -193,7 +194,7 @@ class MainActivity : ComponentActivity() {
                             bookmarkViewModel,
                             onBookmarkItemClick = {bookmarkEntity ->
                                 val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                intent.putExtra("bookmark_data", bookmarkEntity)
+                                intent.putExtra(AppConstants.KEY_BOOKMARK_DATA, bookmarkEntity)
                                 startActivity(intent)
                             }
                         )

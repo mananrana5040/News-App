@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.newsapp.extensions.shareArticle
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.shared.constants.AppConstants
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
@@ -48,11 +49,11 @@ class ContentActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val article: BookmarkEntity
-        if (intent.hasExtra("article_data")) {
-            val news = intent.getSerializableExtra("article_data") as News
+        if (intent.hasExtra(AppConstants.KEY_ARTICLE_DATA)) {
+            val news = intent.getSerializableExtra(AppConstants.KEY_ARTICLE_DATA) as News
             article = news.toBookmarkEntity()
         } else {
-            article = intent.getSerializableExtra("bookmark_data") as BookmarkEntity
+            article = intent.getSerializableExtra(AppConstants.KEY_BOOKMARK_DATA) as BookmarkEntity
         }
 
         val themeManager: ThemeManager by inject()

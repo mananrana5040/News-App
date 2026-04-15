@@ -112,10 +112,7 @@ kotlin {
                 implementation(libs.androidx.sqlite.bundled)
 
 
-                implementation(libs.gitlive.firebase.auth)
-                implementation(libs.firebase.firestore)
-                implementation(libs.firebase.crashlytics)
-                implementation(libs.firebase.config)
+                implementation(libs.bundles.gitlive.firebase)
             }
         }
 

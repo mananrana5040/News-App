@@ -162,7 +162,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             )
 
         Text(
-            text = news?.title ?: "",
+            text = news?.title ?: "n/a",
             style = TextStyle(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -184,7 +184,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
                 modifier = Modifier.size(18.dp)
             )
 
-            val formatDate = formatDate(news?.publishedAt ?: "")
+            val formatDate = formatDate(news?.publishedAt ?: "n/a")
 
             Text(
                 formatDate, style = TextStyle(
@@ -197,35 +197,40 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "",
-                tint = Color(0xFF9A98A5),
-                modifier = Modifier.size(18.dp)
-            )
+            if (news?.author != null) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "",
+                    tint = Color(0xFF9A98A5),
+                    modifier = Modifier.size(18.dp)
+                )
 
-            Text(
-                news?.author ?: "", style = TextStyle(
-                    fontSize = 14.sp,
-                    color = Color(0xFF9A98A5),
-                    fontWeight = FontWeight.Medium
-                ),
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .width(100.dp),
-                maxLines = 1
-            )
+                Text(
+                    news.author, style = TextStyle(
+                        fontSize = 14.sp,
+                        color = Color(0xFF9A98A5),
+                        fontWeight = FontWeight.Medium
+                    ),
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .width(100.dp),
+                    maxLines = 1
+                )
+            }
         }
 
-        Text(
-
-            news?.content?.cleanNewsContent() ?: "", Modifier.padding(horizontal = 12.dp), style = TextStyle(
-                fontSize = 18.sp,
-                color = Color(0xFF9A98A5),
-                lineHeight = 26.sp,
-                textAlign = TextAlign.Justify
+        if (news?.content != null) {
+            Text(
+                news.content.cleanNewsContent(),
+                Modifier.padding(horizontal = 12.dp),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = Color(0xFF9A98A5),
+                    lineHeight = 26.sp,
+                    textAlign = TextAlign.Justify
+                )
             )
-        )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -17,14 +17,12 @@ fun formatDate(dateString: String): String {
     return try {
         val instant = Instant.parse(dateString)
         val dateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-
         val month = dateTime.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
         val day = dateTime.dayOfMonth.toString().padStart(2, '0')
         val year = dateTime.year
-
         "$month $day, $year"
     } catch (e: Exception) {
-        dateString
+        "n/a"
     }
 }
 

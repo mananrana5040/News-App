@@ -22,12 +22,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,9 +44,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
@@ -56,14 +54,11 @@ import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.crashlytics.crashlytics
-import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
 import newsapp.shared.generated.resources.breaking_news
-import newsapp.shared.generated.resources.ic_launcher_background
 import newsapp.shared.generated.resources.img_user
 import newsapp.shared.generated.resources.load_more_news
+import newsapp.shared.generated.resources.retry
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -85,11 +80,11 @@ fun MainScreen(
     ) {
         TopBar(onSettingClick = onSettingClick, onBookMarkClick = onBookMarkClick)
 
-        val breakingNews = viewModel.breakingNews.value
+        val breakingNews by viewModel.breakingNews.collectAsState()
         BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick, bookmarkViewModel)
 
 
-        val currentCategory = viewModel.selectedCategory.value
+        val currentCategory by viewModel.selectedCategory.collectAsState()
         Categories(
             currentCategory,
             onCategoryClick = { clickedCategory ->
@@ -226,7 +221,7 @@ fun BreakingNewsCard(
                 )
 
                 Text(
-                    text = news?.title ?: "",
+                    text = news?.title ?: "n/a",
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -248,7 +243,7 @@ fun BreakingNewsCard(
                         modifier = Modifier.size(18.dp)
                     )
 
-                    val formatDate = formatDate(news?.publishedAt ?: "")
+                    val formatDate = formatDate(news?.publishedAt ?: "n/a")
 
                     Text(
                         formatDate, style = TextStyle(
@@ -290,7 +285,7 @@ fun BreakingNewsCard(
                     )
 
                     Text(
-                        news?.author ?: "", style = TextStyle(
+                        news?.author ?: "n/a", style = TextStyle(
                             fontSize = 14.sp,
                             color = Color(0xFF9A98A5),
                             fontWeight = FontWeight.Medium
@@ -365,8 +360,9 @@ fun NewsList(
     onNewsItemClick: (News) -> Unit
 ) {
 
-    val news = viewModel.articles.value
-    val loading = viewModel.isLoading.value
+    val news by viewModel.articles.collectAsState()
+    val loading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     LazyColumn(
         Modifier
@@ -409,13 +405,25 @@ fun NewsList(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = stringResource(Res.string.load_more_news),
-                        style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
-                        modifier = Modifier.clickable {
-                            viewModel.loadNextPage()
-                        }
-                    )
+                    if (error != null){
+                        Text(
+                            text = "$error\n" + stringResource(Res.string.retry),
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(color = Color(0xFFF63B3B), fontWeight = FontWeight.Bold),
+                            modifier = Modifier.clickable {
+                                viewModel.loadNextPage()
+                            }
+                        )
+                    }else{
+                        Text(
+                            text = stringResource(Res.string.load_more_news),
+                            style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
+                            modifier = Modifier.clickable {
+                                viewModel.loadNextPage()
+                            }
+                        )
+                    }
+
                 }
             }
 
@@ -526,19 +534,21 @@ fun NewsItem(
                         tint = Color(0xFF9A98A5),
                         modifier = Modifier.size(18.dp)
                     )
+
+                    Text(
+                        news.author, style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color(0xFF9A98A5),
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .width(80.dp)
+                    )
                 }
 
-                Text(
-                    news.author ?: "", style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .width(80.dp)
-                )
+
             }
 
         }
