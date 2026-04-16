@@ -120,7 +120,7 @@ fun TopBar(onSettingClick: () -> Unit, onBookMarkClick: () -> Unit) {
         Text(
             currentDate, style = TextStyle(
                 fontSize = 14.sp,
-                color = Color(0xFF9A98A5),
+                color = MaterialTheme.colorScheme.surface,
                 fontWeight = FontWeight.Medium
             ),
             modifier = Modifier.clickable(enabled = true, onClick = onSettingClick)
@@ -193,7 +193,7 @@ fun BreakingNewsCard(
                         .clip(RoundedCornerShape(24.dp)),
                     error = {
                         Box(
-                            modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -211,7 +211,7 @@ fun BreakingNewsCard(
                         ) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(30.dp),
-                                color = Color(0xFF3B82F6)
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
                     },
@@ -239,7 +239,7 @@ fun BreakingNewsCard(
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = "",
-                        tint = Color(0xFF9A98A5),
+                        tint = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.size(18.dp)
                     )
 
@@ -248,7 +248,7 @@ fun BreakingNewsCard(
                     Text(
                         formatDate, style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF9A98A5),
+                            color = MaterialTheme.colorScheme.surface,
                             fontWeight = FontWeight.Medium
                         ),
                         modifier = Modifier.padding(start = 5.dp)
@@ -259,20 +259,9 @@ fun BreakingNewsCard(
                     Icon(
                         imageVector = Icons.Default.Bookmark,
                         contentDescription = "",
-                        tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                        tint = if (isCurrentItemBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                         modifier = Modifier.size(18.dp).clickable {
-                            if (isCurrentItemBookmarked) {
-                                bookmarkViewModel.toggleBookmark(
-                                    news?.toBookmarkEntity() ?: return@clickable,
-                                    true
-                                )
-                            } else {
-                                bookmarkViewModel.toggleBookmark(
-                                    news?.toBookmarkEntity() ?: return@clickable,
-                                    false
-                                )
-
-                            }
+                            news?.let { bookmarkViewModel.onBookmarkClicked(it) }
                         }
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -280,14 +269,14 @@ fun BreakingNewsCard(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "",
-                        tint = Color(0xFF9A98A5),
+                        tint = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.size(18.dp)
                     )
 
                     Text(
                         news?.author ?: "n/a", style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF9A98A5),
+                            color = MaterialTheme.colorScheme.surface,
                             fontWeight = FontWeight.Medium
                         ),
                         modifier = Modifier
@@ -334,7 +323,7 @@ fun Categories(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(CircleShape)
-                        .background(if (isSelected) Color(0xFF3B82F6) else Color.Transparent)
+                        .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -343,7 +332,7 @@ fun Categories(
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) Color(0xFF3B82F6) else Color(0xFF9A98A5)
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -381,14 +370,7 @@ fun NewsList(
                 isBookmarked = isCurrentItemBookmarked,
                 onNewsItemClick = onNewsItemClick,
                 onBookmarkToggle = {
-                    if (isCurrentItemBookmarked) {
-                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), true)
-                    } else {
-                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), false)
-
-                    }
-
-
+                    bookmarkViewModel.onBookmarkClicked(items)
                 }
             )
         }
@@ -396,7 +378,7 @@ fun NewsList(
         item {
             if (loading) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Color(0xFF3B82F6))
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Box(
@@ -409,7 +391,7 @@ fun NewsList(
                         Text(
                             text = "$error\n" + stringResource(Res.string.retry),
                             textAlign = TextAlign.Center,
-                            style = TextStyle(color = Color(0xFFF63B3B), fontWeight = FontWeight.Bold),
+                            style = TextStyle(color = MaterialTheme.colorScheme.onError, fontWeight = FontWeight.Bold),
                             modifier = Modifier.clickable {
                                 viewModel.loadNextPage()
                             }
@@ -417,7 +399,7 @@ fun NewsList(
                     }else{
                         Text(
                             text = stringResource(Res.string.load_more_news),
-                            style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
+                            style = TextStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold),
                             modifier = Modifier.clickable {
                                 viewModel.loadNextPage()
                             }
@@ -456,7 +438,7 @@ fun NewsItem(
                 .clip(RoundedCornerShape(16.dp)),
             error = {
                 Box(
-                    modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
@@ -469,7 +451,7 @@ fun NewsItem(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp),
-                        color = Color(0xFF3B82F6)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             },
@@ -501,7 +483,7 @@ fun NewsItem(
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
@@ -510,7 +492,7 @@ fun NewsItem(
                 Text(
                     formatDate, style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier.padding(start = 5.dp)
@@ -520,7 +502,7 @@ fun NewsItem(
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
-                    tint = if (isBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                    tint = if (isBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp).clickable {
                         onBookmarkToggle()
                     }
@@ -531,14 +513,14 @@ fun NewsItem(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "",
-                        tint = Color(0xFF9A98A5),
+                        tint = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.size(18.dp)
                     )
 
                     Text(
                         news.author, style = TextStyle(
                             fontSize = 14.sp,
-                            color = Color(0xFF9A98A5),
+                            color = MaterialTheme.colorScheme.surface,
                             fontWeight = FontWeight.Medium,
                         ),
                         maxLines = 1,

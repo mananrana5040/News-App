@@ -10,6 +10,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
             val finalThemeValue = isDarkThemePref ?: false
-            SideEffect {
+            DisposableEffect(finalThemeValue) {
                 enableEdgeToEdge(
                     statusBarStyle = if (finalThemeValue) {
                         SystemBarStyle.dark(Color.TRANSPARENT)
@@ -68,6 +69,8 @@ class MainActivity : ComponentActivity() {
                         SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
                     }
                 )
+
+                onDispose {}
             }
 
             BackHandler(enabled = true) {

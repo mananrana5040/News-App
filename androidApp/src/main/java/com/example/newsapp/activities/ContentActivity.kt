@@ -22,6 +22,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,7 +62,7 @@ class ContentActivity : ComponentActivity() {
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
             val finalThemeValue = isDarkThemePref ?: false
-            SideEffect {
+            DisposableEffect(finalThemeValue) {
                 enableEdgeToEdge(
                     statusBarStyle = if (finalThemeValue) {
                         SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
@@ -69,6 +70,8 @@ class ContentActivity : ComponentActivity() {
                         SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
                     }
                 )
+
+                onDispose {}
             }
 
             var showWebView by remember { mutableStateOf(false) }

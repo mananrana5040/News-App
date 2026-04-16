@@ -99,8 +99,7 @@ fun BookmarkTopBar(onBackClick: () -> Unit) {
         Text(
             text = stringResource(Res.string.bookmarks),
             Modifier.padding(start = 24.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
     }
@@ -114,7 +113,7 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
 
     if (bookmarkList.isEmpty()){
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Text(text = stringResource(Res.string.no_bookmarks), style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
+            Text(text = stringResource(Res.string.no_bookmarks), style = TextStyle(color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold, fontSize = 17.sp))
         }
     }
 
@@ -187,7 +186,7 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
@@ -196,7 +195,7 @@ fun BookmarkItem(
                 Text(
                     formatDate, style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier.padding(start = 5.dp)
@@ -206,7 +205,7 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
-                    tint = Color(0xFF3B82F6),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp).clickable {
                         removeBookmark()
                     }
@@ -216,14 +215,14 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
                 Text(
                     bookmark.author ?: "author", style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium,
                     ),
                     maxLines = 1,

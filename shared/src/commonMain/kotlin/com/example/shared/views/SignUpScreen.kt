@@ -97,8 +97,8 @@ fun SignUpScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor = Color(0xFF3B82F6)
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -121,8 +121,8 @@ fun SignUpScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor = Color(0xFF3B82F6)
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -146,8 +146,8 @@ fun SignUpScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor = Color(0xFF3B82F6)
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -175,13 +175,13 @@ fun SignUpScreen(
                 .padding(horizontal = 20.dp)
                 .height(56.dp),
             shape = MaterialTheme.shapes.large,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
 
         ) {
             if (viewModel.isLoading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.align(Alignment.CenterVertically))
             }else{
-                Text(stringResource(Res.string.sign_up), fontSize = 18.sp, color = Color(0xFFFFFFFF))
+                Text(stringResource(Res.string.sign_up), fontSize = 18.sp, color = Color.White)
             }
         }
 

@@ -95,8 +95,7 @@ fun ContentTopBar(
         Text(
             stringResource(Res.string.settings),
             Modifier.padding(start = 24.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -112,8 +111,7 @@ fun ContentTopBar(
         Text(
             stringResource(Res.string.dark_mode),
             Modifier.padding(start = 8.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Switch(
@@ -131,8 +129,7 @@ fun ContentTopBar(
     ) {
         Text(
             text = stringResource(Res.string.current_user) + ": $email",
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Button(

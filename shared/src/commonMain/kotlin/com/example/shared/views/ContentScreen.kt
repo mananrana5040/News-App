@@ -140,7 +140,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             contentScale = ContentScale.Crop,
             error = {
                 Box(
-                    modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
@@ -154,7 +154,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp),
-                        color = Color(0xFF3B82F6)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             },
@@ -180,7 +180,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Default.DateRange,
                 contentDescription = "",
-                tint = Color(0xFF9A98A5),
+                tint = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.size(18.dp)
             )
 
@@ -189,7 +189,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
             Text(
                 formatDate, style = TextStyle(
                     fontSize = 14.sp,
-                    color = Color(0xFF9A98A5),
+                    color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Medium
                 ),
                 modifier = Modifier.padding(start = 5.dp)
@@ -201,14 +201,14 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
                 Text(
                     news.author, style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier
@@ -225,7 +225,7 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
                 Modifier.padding(horizontal = 12.dp),
                 style = TextStyle(
                     fontSize = 18.sp,
-                    color = Color(0xFF9A98A5),
+                    color = MaterialTheme.colorScheme.surface,
                     lineHeight = 26.sp,
                     textAlign = TextAlign.Justify
                 )
@@ -236,9 +236,9 @@ fun ContentMainCard(news: BookmarkEntity?, onReadMoreClick: () -> Unit) {
 
         Button(
             onClick = onReadMoreClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(stringResource(Res.string.read_full_news), color = Color(0xFFFFFFFF))
+            Text(stringResource(Res.string.read_full_news), color = Color.White)
         }
 
 
