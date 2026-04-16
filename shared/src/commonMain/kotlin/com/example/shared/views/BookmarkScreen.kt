@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,14 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.shared.database.BookmarkDao
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.helper.formatDate
-import com.example.shared.model.News
-import com.example.shared.model.toBookmarkEntity
-import com.example.shared.repository.BookmarkRepository
 import com.example.shared.viewmodel.BookmarkViewModel
-import com.example.shared.viewmodel.NewsViewModel
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.bookmarks
+import newsapp.shared.generated.resources.no_bookmarks
+import org.jetbrains.compose.resources.stringResource
 
 @Preview
 @Composable
@@ -100,10 +97,9 @@ fun BookmarkTopBar(onBackClick: () -> Unit) {
         }
 
         Text(
-            "Bookmarks",
+            text = stringResource(Res.string.bookmarks),
             Modifier.padding(start = 24.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
     }
@@ -117,14 +113,14 @@ fun BookmarkList(bookmarkViewModel: BookmarkViewModel, onBookmarkItemClick: (Boo
 
     if (bookmarkList.isEmpty()){
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Text(text = "No Bookmarks", style = TextStyle(color = Color(0xFF9A98A5), fontWeight = FontWeight.Bold, fontSize = 17.sp))
+            Text(text = stringResource(Res.string.no_bookmarks), style = TextStyle(color = MaterialTheme.colorScheme.surface, fontWeight = FontWeight.Bold, fontSize = 17.sp))
         }
     }
 
     LazyColumn(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
+            .padding(bottom = 25.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
@@ -157,12 +153,12 @@ fun BookmarkItem(
     ) {
 
         AsyncImage(
-            bookmark.urlToImage ?: "null",
+            bookmark.urlToImage,
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -190,7 +186,7 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
@@ -199,7 +195,7 @@ fun BookmarkItem(
                 Text(
                     formatDate, style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier.padding(start = 5.dp)
@@ -209,7 +205,7 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
-                    tint = Color(0xFF3B82F6),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp).clickable {
                         removeBookmark()
                     }
@@ -219,14 +215,14 @@ fun BookmarkItem(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
                 Text(
                     bookmark.author ?: "author", style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium,
                     ),
                     maxLines = 1,

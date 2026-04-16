@@ -3,68 +3,60 @@ package com.example.shared.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shared.helper.CategoryMapper
 import com.example.shared.model.News
 import com.example.shared.repository.NewsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NewsViewModel(private val repository: NewsRepository) : ViewModel() {
-    var articles = mutableStateOf<List<News>>(emptyList())
-
-    var breakingNews = mutableStateOf<News?>(null)
-    var isLoading = mutableStateOf(false)
-    var selectedCategory = mutableStateOf("All")
+    private val _articles = MutableStateFlow<List<News>>(emptyList())
+    val articles: StateFlow<List<News>> = _articles.asStateFlow()
+    private val _breakingNews = MutableStateFlow<News?>(null)
+    val breakingNews: StateFlow<News?> = _breakingNews.asStateFlow()
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     var currentPage = 1
 
     init {
-        fetchBreakingNews()
         fetchNews("general")
     }
 
-    private fun fetchBreakingNews() {
-        viewModelScope.launch {
-            try {
-                val response = repository.getNewsByCategory("general")
-                if (response.isNotEmpty()) {
-                    breakingNews.value = response[0]
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
 
     fun loadNextPage() {
         currentPage++
-        fetchNews(selectedCategory.value, currentPage)
+        fetchNews(_selectedCategory.value, currentPage)
     }
 
     fun onCategoryChanged(newCategory: String) {
-        selectedCategory.value = newCategory
+        _selectedCategory.value = newCategory
         currentPage = 1
-        articles.value = emptyList()
+        _articles.value = emptyList()
 
-        val apiCategory = when (newCategory) {
-            "All" -> "general"
-            "Business" -> "business"
-            "Media" -> "entertainment"
-            "Sports" -> "sports"
-            "Tech" -> "technology"
-            else -> "general"
-        }
+        val apiCategory = CategoryMapper.mapToApiCategory(newCategory)
         fetchNews(apiCategory)
     }
 
     private fun fetchNews(category: String, page: Int = 1) {
         viewModelScope.launch {
-            isLoading.value = true
+            _isLoading.value = true
+            _error.value = null
             try {
-                articles.value += repository.getNewsByCategory(category, page)
-                println("KMP_DEBUG: Successfully fetched ${articles.value.size} articles")
+                _articles.value += repository.getNewsByCategory(category, page)
+                _breakingNews.value = _articles.value[0]
+                println("KMP_DEBUG: Successfully fetched ${_articles.value.size} articles")
             } catch (e: Exception) {
                 println("KMP_DEBUG: Error fetching news: ${e.message}")
-                e.printStackTrace()
+                _error.value = e.message ?: "An unexpected error occurred"
             } finally {
-                isLoading.value = false
+                _isLoading.value = false
             }
         }
     }

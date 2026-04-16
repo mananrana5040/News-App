@@ -30,6 +30,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.current_user
+import newsapp.shared.generated.resources.dark_mode
+import newsapp.shared.generated.resources.settings
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingScreen(
@@ -88,10 +93,9 @@ fun ContentTopBar(
         }
 
         Text(
-            "Settings",
+            stringResource(Res.string.settings),
             Modifier.padding(start = 24.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
 
@@ -105,10 +109,9 @@ fun ContentTopBar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            "Dark Mode",
+            stringResource(Res.string.dark_mode),
             Modifier.padding(start = 8.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Switch(
@@ -125,9 +128,8 @@ fun ContentTopBar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Current User: $email",
-            style = TextStyle(fontWeight = FontWeight.Bold),
-            fontSize = 16.sp,
+            text = stringResource(Res.string.current_user) + ": $email",
+            style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Button(

@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.app_name
 import newsapp.shared.generated.resources.splash_icon
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SplashScreen(
@@ -54,7 +56,7 @@ fun SplashScreen(
         )
         Spacer(Modifier.padding(top = 16.dp))
         Text(
-            text = "News App",
+            text = stringResource(Res.string.app_name),
             style = TextStyle(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold,

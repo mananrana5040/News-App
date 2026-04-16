@@ -1,13 +1,17 @@
 package com.example.newsapp.activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.extensions.isInternetAvailable
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.shared.config.ApiKeyManager
+import com.example.shared.constants.AppConstants
 import com.example.shared.helper.Screen
 import com.example.shared.preference.ThemeManager
 import com.example.shared.viewmodel.AuthViewModel
@@ -38,10 +44,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         val themeManager: ThemeManager by inject()
         val viewModel: AuthViewModel by inject()
         val bookmarkViewModel: BookmarkViewModel by inject()
+        val apiKeyManager: ApiKeyManager by inject()
+
+        lifecycleScope.launch {
+            apiKeyManager.initializeRemoteKeys()
+        }
 
         if (!isInternetAvailable()){
             Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_SHORT).show()
@@ -49,8 +60,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
-            val systemTheme = isSystemInDarkTheme()
-            val finalThemeValue = isDarkThemePref ?: systemTheme
+            val finalThemeValue = isDarkThemePref ?: false
+            DisposableEffect(finalThemeValue) {
+                enableEdgeToEdge(
+                    statusBarStyle = if (finalThemeValue) {
+                        SystemBarStyle.dark(Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    }
+                )
+
+                onDispose {}
+            }
 
             BackHandler(enabled = true) {
                 finish()
@@ -121,7 +142,7 @@ class MainActivity : ComponentActivity() {
                             onBreakingCardClick = {
                                 if (viewModel.breakingNews.value != null){
                                     val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                    intent.putExtra("article_data", viewModel.breakingNews.value)
+                                    intent.putExtra(AppConstants.KEY_ARTICLE_DATA, viewModel.breakingNews.value)
                                     startActivity(intent)
                                 }else{
                                     Toast.makeText(this@MainActivity, "News not loaded. Check Internet Connection.", Toast.LENGTH_SHORT).show()
@@ -133,7 +154,7 @@ class MainActivity : ComponentActivity() {
                             },
                             onNewsItemClick = { news ->
                                 val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                intent.putExtra("article_data", news)
+                                intent.putExtra(AppConstants.KEY_ARTICLE_DATA, news)
                                 startActivity(intent)
                             },
                             onBookMarkClick = {
@@ -168,7 +189,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(Screen.Bookmark.route) {
-                        bookmarkViewModel.syncFromCloud()
+//                        bookmarkViewModel.syncFromCloud()
                         BookmarkScreen(
                             onBackClick = {
                                 navController.popBackStack()
@@ -176,7 +197,7 @@ class MainActivity : ComponentActivity() {
                             bookmarkViewModel,
                             onBookmarkItemClick = {bookmarkEntity ->
                                 val intent = Intent(this@MainActivity, ContentActivity::class.java)
-                                intent.putExtra("bookmark_data", bookmarkEntity)
+                                intent.putExtra(AppConstants.KEY_BOOKMARK_DATA, bookmarkEntity)
                                 startActivity(intent)
                             }
                         )

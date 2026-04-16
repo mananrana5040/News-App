@@ -22,12 +22,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,9 +44,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import coil3.compose.SubcomposeAsyncImage
 import com.example.shared.helper.currentDateDisplay
 import com.example.shared.helper.formatDate
@@ -56,13 +54,13 @@ import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
 import com.example.shared.viewmodel.BookmarkViewModel
 import com.example.shared.viewmodel.NewsViewModel
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.crashlytics.crashlytics
-import kotlinx.serialization.json.Json
 import newsapp.shared.generated.resources.Res
-import newsapp.shared.generated.resources.ic_launcher_background
+import newsapp.shared.generated.resources.breaking_news
 import newsapp.shared.generated.resources.img_user
+import newsapp.shared.generated.resources.load_more_news
+import newsapp.shared.generated.resources.retry
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -82,11 +80,11 @@ fun MainScreen(
     ) {
         TopBar(onSettingClick = onSettingClick, onBookMarkClick = onBookMarkClick)
 
-        val breakingNews = viewModel.breakingNews.value
+        val breakingNews by viewModel.breakingNews.collectAsState()
         BreakingNewsCard(breakingNews, onBreakingCardClick = onBreakingCardClick, bookmarkViewModel)
 
 
-        val currentCategory = viewModel.selectedCategory.value
+        val currentCategory by viewModel.selectedCategory.collectAsState()
         Categories(
             currentCategory,
             onCategoryClick = { clickedCategory ->
@@ -103,7 +101,7 @@ fun TopBar(onSettingClick: () -> Unit, onBookMarkClick: () -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -122,7 +120,7 @@ fun TopBar(onSettingClick: () -> Unit, onBookMarkClick: () -> Unit) {
         Text(
             currentDate, style = TextStyle(
                 fontSize = 14.sp,
-                color = Color(0xFF9A98A5),
+                color = MaterialTheme.colorScheme.surface,
                 fontWeight = FontWeight.Medium
             ),
             modifier = Modifier.clickable(enabled = true, onClick = onSettingClick)
@@ -161,16 +159,16 @@ fun BreakingNewsCard(
     Column(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = 24.dp)
     ) {
 
         Text(
-            "Breaking News", style = TextStyle(
+            stringResource(Res.string.breaking_news), style = TextStyle(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.onBackground
             ),
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         Card(
@@ -179,117 +177,115 @@ fun BreakingNewsCard(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(
-                    onClick = onBreakingCardClick
-                )
         ) {
-            SubcomposeAsyncImage(
-                news?.urlToImage ?: Res.drawable.ic_launcher_background,
-                contentDescription = null,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(24.dp)),
-                error = {
-                    Box(
-                        modifier = Modifier.fillMaxSize().background(Color(0xFFF3F4F6)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
-                    }
-                },
-
-                loading = {
-                    Box(
-                        modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(30.dp),
-                            color = Color(0xFF3B82F6)
-                        )
-                    }
-                },
-
-
-                contentScale = ContentScale.Crop
-            )
-
-            Text(
-                text = news?.title ?: "Breaking News Loading",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                ),
-                maxLines = 2,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 16.dp)
-            )
-
-            Row(
-                modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .clickable(onClick = onBreakingCardClick)
             ) {
 
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Search",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
-
-                val formatDate = formatDate(news?.publishedAt ?: "2026-03-05T04:43:00Z")
-
-                Text(
-                    formatDate, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium
-                    ),
-                    modifier = Modifier.padding(start = 5.dp)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Icon(
-                    imageVector = Icons.Default.Bookmark,
-                    contentDescription = "",
-                    tint = if (isCurrentItemBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp).clickable {
-                        if (isCurrentItemBookmarked) {
-                            bookmarkViewModel.toggleBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable,
-                                true
-                            )
-                        } else {
-                            bookmarkViewModel.toggleBookmark(
-                                news?.toBookmarkEntity() ?: return@clickable,
-                                false
-                            )
-
-                        }
-                    }
-                )
-                Spacer(modifier = Modifier.weight(1f))
-
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
-
-                Text(
-                    news?.author ?: "Author", style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium
-                    ),
+                SubcomposeAsyncImage(
+                    news?.urlToImage,
+                    contentDescription = null,
                     modifier = Modifier
-                        .padding(start = 5.dp)
-                        .width(100.dp),
-                    maxLines = 1
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(24.dp)),
+                    error = {
+                        Box(
+                            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Default.BrokenImage,
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
+                        }
+                    },
+
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(30.dp),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    },
+
+
+                    contentScale = ContentScale.Crop
                 )
+
+                Text(
+                    text = news?.title ?: "n/a",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    ),
+                    maxLines = 2,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+                )
+
+                Row(
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 18.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp)
+                    )
+
+                    val formatDate = formatDate(news?.publishedAt ?: "n/a")
+
+                    Text(
+                        formatDate, style = TextStyle(
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.surface,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        modifier = Modifier.padding(start = 5.dp)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = Icons.Default.Bookmark,
+                        contentDescription = "",
+                        tint = if (isCurrentItemBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp).clickable {
+                            news?.let { bookmarkViewModel.onBookmarkClicked(it) }
+                        }
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp)
+                    )
+
+                    Text(
+                        news?.author ?: "n/a", style = TextStyle(
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.surface,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .width(100.dp),
+                        maxLines = 1
+                    )
+                }
+
             }
         }
 
@@ -308,7 +304,7 @@ fun Categories(
     LazyRow(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 18.dp),
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(32.dp)
     ) {
 
@@ -327,7 +323,7 @@ fun Categories(
                     modifier = Modifier
                         .size(4.dp)
                         .clip(CircleShape)
-                        .background(if (isSelected) Color(0xFF3B82F6) else Color.Transparent)
+                        .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -336,7 +332,7 @@ fun Categories(
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) Color(0xFF3B82F6) else Color(0xFF9A98A5)
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -353,13 +349,14 @@ fun NewsList(
     onNewsItemClick: (News) -> Unit
 ) {
 
-    val news = viewModel.articles.value
-    val loading = viewModel.isLoading.value
+    val news by viewModel.articles.collectAsState()
+    val loading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
     LazyColumn(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 18.dp),
+            .padding(bottom = 18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
@@ -373,14 +370,7 @@ fun NewsList(
                 isBookmarked = isCurrentItemBookmarked,
                 onNewsItemClick = onNewsItemClick,
                 onBookmarkToggle = {
-                    if (isCurrentItemBookmarked) {
-                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), true)
-                    } else {
-                        bookmarkViewModel.toggleBookmark(items.toBookmarkEntity(), false)
-
-                    }
-
-
+                    bookmarkViewModel.onBookmarkClicked(items)
                 }
             )
         }
@@ -388,7 +378,7 @@ fun NewsList(
         item {
             if (loading) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = Color(0xFF3B82F6))
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Box(
@@ -397,13 +387,25 @@ fun NewsList(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "Load More News",
-                        style = TextStyle(color = Color(0xFF3B82F6), fontWeight = FontWeight.Bold),
-                        modifier = Modifier.clickable {
-                            viewModel.loadNextPage()
-                        }
-                    )
+                    if (error != null){
+                        Text(
+                            text = "$error\n" + stringResource(Res.string.retry),
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(color = MaterialTheme.colorScheme.onError, fontWeight = FontWeight.Bold),
+                            modifier = Modifier.clickable {
+                                viewModel.loadNextPage()
+                            }
+                        )
+                    }else{
+                        Text(
+                            text = stringResource(Res.string.load_more_news),
+                            style = TextStyle(color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold),
+                            modifier = Modifier.clickable {
+                                viewModel.loadNextPage()
+                            }
+                        )
+                    }
+
                 }
             }
 
@@ -429,11 +431,19 @@ fun NewsItem(
     ) {
 
         SubcomposeAsyncImage(
-            news.urlToImage ?: "null",
+            news.urlToImage,
             contentDescription = null,
             modifier = Modifier
                 .size(90.dp)
                 .clip(RoundedCornerShape(16.dp)),
+            error = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.BrokenImage, contentDescription = null, tint = Color.Gray)
+                }
+            },
             loading = {
                 Box(
                     modifier = Modifier.fillMaxSize().background(color = Color.LightGray),
@@ -441,7 +451,7 @@ fun NewsItem(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp),
-                        color = Color(0xFF3B82F6)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             },
@@ -473,7 +483,7 @@ fun NewsItem(
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "",
-                    tint = Color(0xFF9A98A5),
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp)
                 )
 
@@ -482,7 +492,7 @@ fun NewsItem(
                 Text(
                     formatDate, style = TextStyle(
                         fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
+                        color = MaterialTheme.colorScheme.surface,
                         fontWeight = FontWeight.Medium
                     ),
                     modifier = Modifier.padding(start = 5.dp)
@@ -492,31 +502,35 @@ fun NewsItem(
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = "",
-                    tint = if (isBookmarked) Color(0xFF3B82F6) else Color(0xFF9A98A5),
+                    tint = if (isBookmarked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                     modifier = Modifier.size(18.dp).clickable {
                         onBookmarkToggle()
                     }
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "",
-                    tint = Color(0xFF9A98A5),
-                    modifier = Modifier.size(18.dp)
-                )
+                if (news.author != null) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(18.dp)
+                    )
 
-                Text(
-                    news.author ?: "author", style = TextStyle(
-                        fontSize = 14.sp,
-                        color = Color(0xFF9A98A5),
-                        fontWeight = FontWeight.Medium,
-                    ),
-                    maxLines = 1,
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .width(80.dp)
-                )
+                    Text(
+                        news.author, style = TextStyle(
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.surface,
+                            fontWeight = FontWeight.Medium,
+                        ),
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .width(80.dp)
+                    )
+                }
+
+
             }
 
         }

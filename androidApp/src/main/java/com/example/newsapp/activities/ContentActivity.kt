@@ -8,6 +8,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.newsapp.extensions.shareArticle
 import com.example.newsapp.ui.theme.NewsAppTheme
+import com.example.shared.constants.AppConstants
 import com.example.shared.database.BookmarkEntity
 import com.example.shared.model.News
 import com.example.shared.model.toBookmarkEntity
@@ -44,22 +48,31 @@ class ContentActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         val article: BookmarkEntity
-        if (intent.hasExtra("article_data")) {
-            val news = intent.getSerializableExtra("article_data") as News
+        if (intent.hasExtra(AppConstants.KEY_ARTICLE_DATA)) {
+            val news = intent.getSerializableExtra(AppConstants.KEY_ARTICLE_DATA) as News
             article = news.toBookmarkEntity()
         } else {
-            article = intent.getSerializableExtra("bookmark_data") as BookmarkEntity
+            article = intent.getSerializableExtra(AppConstants.KEY_BOOKMARK_DATA) as BookmarkEntity
         }
 
         val themeManager: ThemeManager by inject()
 
         setContent {
             val isDarkThemePref by themeManager.isDarkMode.collectAsState(initial = null)
-            val systemTheme = isSystemInDarkTheme()
-            val finalThemeValue = isDarkThemePref ?: systemTheme
+            val finalThemeValue = isDarkThemePref ?: false
+            DisposableEffect(finalThemeValue) {
+                enableEdgeToEdge(
+                    statusBarStyle = if (finalThemeValue) {
+                        SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+                    }
+                )
+
+                onDispose {}
+            }
 
             var showWebView by remember { mutableStateOf(false) }
 

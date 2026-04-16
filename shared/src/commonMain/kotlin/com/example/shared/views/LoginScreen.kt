@@ -13,10 +13,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,9 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shared.viewmodel.AuthViewModel
+import newsapp.shared.generated.resources.Res
+import newsapp.shared.generated.resources.dont_have_acc
+import newsapp.shared.generated.resources.email_address
+import newsapp.shared.generated.resources.login_to_continue
+import newsapp.shared.generated.resources.password
+import newsapp.shared.generated.resources.welcome_back
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoginScreen(
@@ -52,9 +64,10 @@ fun LoginScreen(
 
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var passwordVisible by remember { mutableStateOf(false) }
 
         Text(
-            text = "Welcome Back",
+            text = stringResource(Res.string.welcome_back),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -62,7 +75,7 @@ fun LoginScreen(
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = "Please Log in to continue",
+            text = stringResource(Res.string.login_to_continue),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
@@ -71,15 +84,15 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email Address") },
+            label = { Text(stringResource(Res.string.email_address)) },
             placeholder = { Text("example@mail.com") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor  = Color(0xFF3B82F6)
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor  = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -88,14 +101,22 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it},
-            label = { Text("Password") },
+            label = { Text(stringResource(Res.string.password)) },
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val description = if (passwordVisible) "Hide password" else "Show password"
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
+                }
+            },
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF3B82F6),
-                focusedLabelColor  = Color(0xFF3B82F6)
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor  = MaterialTheme.colorScheme.primary
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -119,13 +140,13 @@ fun LoginScreen(
                 .padding(horizontal = 20.dp)
                 .height(56.dp),
             shape = MaterialTheme.shapes.large,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
 
         ) {
             if (viewModel.isLoading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.align(Alignment.CenterVertically))
             }else{
-                Text("Login", fontSize = 18.sp, color = Color(0xFFFFFFFF))
+                Text("Login", fontSize = 18.sp, color = Color.White)
             }
         }
 
@@ -133,7 +154,7 @@ fun LoginScreen(
 
         TextButton(onClick = {onNavigateToSignup()}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
             Text(
-                "Don't have an account? Sign Up",
+                stringResource(Res.string.dont_have_acc),
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
